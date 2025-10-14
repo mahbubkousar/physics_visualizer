@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2D Graph Visualization</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      background: #ffffff;
+    }
+    #container {
+      width: 100vw;
+      height: 100vh;
+    }
+    #toolbar {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+    .tool-tab {
+      padding: 10px 20px;
+      background: #ecf0f1;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      color: #555;
+      transition: all 0.2s;
+    }
+    .tool-tab:hover {
+      background: #bdc3c7;
+    }
+    .tool-tab.active {
+      background: #3498db;
+      color: white;
+    }
+    #controls {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+    }
+    #controls h3 {
+      margin: 0 0 15px 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .input-group {
+      margin: 10px 0;
+    }
+    .input-group label {
+      display: inline-block;
+      width: 25px;
+      font-weight: bold;
+      color: #555;
+    }
+    #controls input {
+      width: 80px;
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    #controls button {
+      padding: 8px 16px;
+      margin: 5px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #controls button:hover {
+      background: #2980b9;
+    }
+    #controls button.secondary {
+      background: #95a5a6;
+    }
+    #controls button.secondary:hover {
+      background: #7f8c8d;
+    }
+    .nav-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+      align-items: center;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #000;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+      transition: opacity 0.2s;
+    }
+    .nav-btn:hover {
+      opacity: 0.6;
+    }
+    .nav-btn.hidden {
+      display: none;
+    }
+    #liveValues {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 101;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #333;
+      display: none;
+    }
+    #liveValues.active {
+      display: block;
+    }
+    #liveValues .label {
+      font-weight: bold;
+      color: #555;
+    }
+    #liveValues .value {
+      color: #3498db;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <div id="liveValues">
+    <div><span class="label">X:</span> <span class="value" id="liveX">0.00</span></div>
+    <div><span class="label">Y:</span> <span class="value" id="liveY">0.00</span></div>
+    <div id="liveVelocity" style="display: none;">
+      <div><span class="label">Vx:</span> <span class="value" id="liveVx">0.00</span> m/s</div>
+      <div><span class="label">Vy:</span> <span class="value" id="liveVy">0.00</span> m/s</div>
+    </div>
+  </div>
+
+  <div id="toolbar">
+    <button class="tool-tab active" data-tool="2dgraph">2D Graph</button>
+    <button class="tool-tab" data-tool="projectile">Projectile Motion</button>
+  </div>
+
+  <div id="controls">
+    <div id="controls-2dgraph" class="tool-controls">
+      <h3>2D Graph Tool</h3>
+      <div class="input-group">
+        <label>X:</label>
+        <input type="number" id="inputX" value="0" step="0.1">
+      </div>
+      <div class="input-group">
+        <label>Y:</label>
+        <input type="number" id="inputY" value="0" step="0.1">
+      </div>
+      <button id="addPointBtn">Add Point</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+
+    <div id="controls-projectile" class="tool-controls" style="display: none;">
+      <h3>Projectile Motion</h3>
+      <div class="input-group">
+        <label>v₀:</label>
+        <input type="number" id="inputV0" value="20" step="1">
+        <span style="margin-left: 5px; color: #666; font-size: 12px;">m/s</span>
+      </div>
+      <div class="input-group">
+        <label>θ:</label>
+        <input type="number" id="inputTheta" value="45" step="1">
+        <span style="margin-left: 5px; color: #666; font-size: 12px;">deg</span>
+      </div>
+      <div class="input-group">
+        <label>x₀:</label>
+        <input type="number" id="inputX0" value="0" step="1">
+        <span style="margin-left: 5px; color: #666; font-size: 12px;">m</span>
+      </div>
+      <div class="input-group">
+        <label>y₀:</label>
+        <input type="number" id="inputY0" value="0" step="1">
+        <span style="margin-left: 5px; color: #666; font-size: 12px;">m</span>
+      </div>
+      <button id="launchBtn">Launch</button>
+      <button id="resetProjectileBtn" class="secondary">Reset</button>
+    </div>
+  </div>
+
+  <div class="nav-controls">
+    <button class="nav-btn hidden" id="leftBtn"><i class="fas fa-chevron-left"></i></button>
+    <button class="nav-btn hidden" id="pauseBtn"><i class="fas fa-pause"></i></button>
+    <button class="nav-btn hidden" id="replayBtn"><i class="fas fa-redo"></i></button>
+    <button class="nav-btn hidden" id="rightBtn"><i class="fas fa-chevron-right"></i></button>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+  <script type="module">
+    let isPaused = false;
+    let isFinished = false;
+
+    // State 1: Animating - show only pause button
+    window.showControls = () => {
+      document.getElementById('pauseBtn').classList.remove('hidden');
+      document.getElementById('pauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
+      document.getElementById('leftBtn').classList.add('hidden');
+      document.getElementById('replayBtn').classList.add('hidden');
+      document.getElementById('rightBtn').classList.add('hidden');
+      isFinished = false;
+      isPaused = false;
+    };
+
+    // State 2: Finished - show left, replay, right (no pause/play)
+    window.showFinishedControls = () => {
+      document.getElementById('pauseBtn').classList.add('hidden');
+      document.getElementById('leftBtn').classList.remove('hidden');
+      document.getElementById('replayBtn').classList.remove('hidden');
+      document.getElementById('rightBtn').classList.remove('hidden');
+      isFinished = true;
+      isPaused = false;
+    };
+
+    // State 3: Hide all
+    window.hideControls = () => {
+      document.getElementById('pauseBtn').classList.add('hidden');
+      document.getElementById('leftBtn').classList.add('hidden');
+      document.getElementById('replayBtn').classList.add('hidden');
+      document.getElementById('rightBtn').classList.add('hidden');
+      isFinished = false;
+      isPaused = false;
+    };
+
+    // Pause button toggles between pause and play
+    document.getElementById('pauseBtn').addEventListener('click', () => {
+      if (isFinished) return; // Don't allow pause when finished
+
+      isPaused = !isPaused;
+      const pauseBtn = document.getElementById('pauseBtn');
+      const leftBtn = document.getElementById('leftBtn');
+      const rightBtn = document.getElementById('rightBtn');
+
+      if (isPaused) {
+        // State 4: Paused - show play + left + right (no replay)
+        pauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        leftBtn.classList.remove('hidden');
+        rightBtn.classList.remove('hidden');
+      } else {
+        // Back to animating - show only pause
+        pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        leftBtn.classList.add('hidden');
+        rightBtn.classList.add('hidden');
+      }
+      window.togglePause(isPaused);
+    });
+
+    document.getElementById('leftBtn').addEventListener('click', () => {
+      window.moveObject('left');
+    });
+
+    document.getElementById('rightBtn').addEventListener('click', () => {
+      window.moveObject('right');
+    });
+
+    document.getElementById('replayBtn').addEventListener('click', () => {
+      window.replayAnimation();
+    });
+
+    // Live values display functions
+    window.showLiveValues = (showVelocity = false) => {
+      document.getElementById('liveValues').classList.add('active');
+      if (showVelocity) {
+        document.getElementById('liveVelocity').style.display = 'block';
+      } else {
+        document.getElementById('liveVelocity').style.display = 'none';
+      }
+    };
+
+    window.hideLiveValues = () => {
+      document.getElementById('liveValues').classList.remove('active');
+    };
+
+    window.updateLiveValues = (x, y, vx = null, vy = null) => {
+      document.getElementById('liveX').textContent = x.toFixed(2);
+      document.getElementById('liveY').textContent = y.toFixed(2);
+      if (vx !== null && vy !== null) {
+        document.getElementById('liveVx').textContent = vx.toFixed(2);
+        document.getElementById('liveVy').textContent = vy.toFixed(2);
+      }
+    };
+
+    document.getElementById('addPointBtn').addEventListener('click', () => {
+      const x = parseFloat(document.getElementById('inputX').value);
+      const y = parseFloat(document.getElementById('inputY').value);
+      const colors = [0x3498db, 0xe74c3c, 0x2ecc71, 0xf39c12, 0x9b59b6];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      window.addPoint(x, y, color);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      window.resetTool();
+    });
+
+    document.getElementById('launchBtn').addEventListener('click', () => {
+      const v0 = parseFloat(document.getElementById('inputV0').value);
+      const theta = parseFloat(document.getElementById('inputTheta').value);
+      const x0 = parseFloat(document.getElementById('inputX0').value);
+      const y0 = parseFloat(document.getElementById('inputY0').value);
+      const colors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      window.launchProjectile(v0, theta, x0, y0, color);
+    });
+
+    document.getElementById('resetProjectileBtn').addEventListener('click', () => {
+      window.resetTool();
+    });
+
+    document.querySelectorAll('.tool-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const toolName = tab.dataset.tool;
+
+        document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        document.querySelectorAll('.tool-controls').forEach(c => c.style.display = 'none');
+        document.getElementById(`controls-${toolName}`).style.display = 'block';
+
+        window.switchTool(toolName);
+      });
+    });
+  </script>
+</body>
+</html>
