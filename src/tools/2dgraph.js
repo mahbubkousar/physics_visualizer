@@ -11,7 +11,7 @@ export class Graph2D {
     this.zoomAnimation = null;
     this.zoomDuration = 800;
     this.paused = false;
-    this.animationSpeed = 1.0; // Default speed multiplier
+    this.animationSpeed = 1.0;
     this.setupGraph();
     this.createAxisLabels();
   }
@@ -32,7 +32,7 @@ export class Graph2D {
     this.view.scale({
       axis: 1,
       divide: 5,
-      zero: false,  // Don't show zero tick on X-axis
+      zero: false,
     });
 
     this.view.ticks({
@@ -55,7 +55,7 @@ export class Graph2D {
     this.view.scale({
       axis: 2,
       divide: 5,
-      zero: true,  // Show zero tick on Y-axis
+      zero: true,
     });
 
     this.view.ticks({
@@ -72,9 +72,8 @@ export class Graph2D {
     this.view.label({
       color: 0x000000,
       size: 18,
-      offset: [-30, -30],  // Move Y-axis labels down slightly
+      offset: [-30, -30],
     });
-
   }
 
   createAxisLabels() {
@@ -194,7 +193,6 @@ export class Graph2D {
 
   setAnimationSpeed(speed) {
     this.animationSpeed = speed;
-    console.log('Animation speed set to:', speed);
   }
 
   moveLatestObject(direction) {
@@ -202,17 +200,14 @@ export class Graph2D {
 
     const point = this.points[this.points.length - 1];
 
-    // Store original target if not already stored
     if (!point.originalX) point.originalX = point.x;
     if (!point.originalY) point.originalY = point.y;
-    if (!point.pathProgress) point.pathProgress = 1; // Start at 100% (at the end)
+    if (!point.pathProgress) point.pathProgress = 1;
 
     const targetX = point.originalX;
     const targetY = point.originalY;
+    const shift = 0.02;
 
-    const shift = 0.02; // 2% of progress
-
-    // Update progress
     point.pathProgress = direction === 'left'
       ? Math.max(0, point.pathProgress - shift)
       : Math.min(1, point.pathProgress + shift);
@@ -220,22 +215,18 @@ export class Graph2D {
     let currentX, currentY;
 
     if (point.pathProgress < 0.5) {
-      // Phase 1: Moving along X-axis
-      const phase1Progress = point.pathProgress * 2; // 0 to 1
+      const phase1Progress = point.pathProgress * 2;
       currentX = targetX * phase1Progress;
       currentY = 0;
 
-      // Update path to show horizontal line
       if (point.path) {
         point.path.set('data', [[0, 0, 0], [currentX, 0, 0]]);
       }
     } else {
-      // Phase 2: Moving along Y-axis
-      const phase2Progress = (point.pathProgress - 0.5) * 2; // 0 to 1
+      const phase2Progress = (point.pathProgress - 0.5) * 2;
       currentX = targetX;
       currentY = targetY * phase2Progress;
 
-      // Update path to show L-shape
       if (point.path) {
         point.path.set('data', [[0, 0, 0], [targetX, 0, 0], [targetX, currentY, 0]]);
       }
@@ -246,21 +237,17 @@ export class Graph2D {
 
     point.data.set('data', [[currentX, currentY, 0]]);
 
-    // Update final line
     if (point.line) {
       point.line.set('data', [[0, 0, 0], [currentX, currentY, 0]]);
     }
 
-    // Show/hide final line based on progress
     if (point.finalLine) {
       point.finalLine.set('opacity', point.pathProgress >= 1 ? 0.6 : 0);
     }
 
-    // Update live values display
     if (window.updateLiveValues) {
       window.updateLiveValues(currentX, currentY);
     }
-    // Show live values if not already visible
     if (window.showLiveValues) {
       window.showLiveValues();
     }
@@ -270,22 +257,17 @@ export class Graph2D {
     if (this.points.length === 0) return;
 
     const point = this.points[this.points.length - 1];
-    // Use original values if they exist (from navigation), otherwise use current values
     const targetX = point.originalX !== undefined ? point.originalX : point.x;
     const targetY = point.originalY !== undefined ? point.originalY : point.y;
 
-    // Reset progress for replay
     point.pathProgress = 0;
 
-    // Reset final line opacity to 0 during replay
     if (point.finalLine) {
       point.finalLine.set('opacity', 0);
     }
 
-    // Reset animation state
     this.paused = false;
 
-    // Just re-animate the existing point from origin
     const startTime = Date.now();
     let pausedTime = 0;
     let lastTime = startTime;
@@ -295,7 +277,6 @@ export class Graph2D {
     if (window.showLiveValues) window.showLiveValues();
 
     const animate = () => {
-      // Check if animation was stopped
       if (this.animatingPoint === null) return;
 
       if (this.paused) {
@@ -312,33 +293,27 @@ export class Graph2D {
       let currentX, currentY;
 
       if (progress < 0.5) {
-        // Phase 1: Move along X-axis
         const phase1Progress = progress * 2;
         const eased = this.easeInOutCubic(phase1Progress);
         currentX = targetX * eased;
         currentY = 0;
 
-        // Path shows movement along X-axis
         if (point.path) {
           point.path.set('data', [[0, 0, 0], [currentX, 0, 0]]);
         }
       } else {
-        // Phase 2: Move along Y-axis
         const phase2Progress = (progress - 0.5) * 2;
         const eased = this.easeInOutCubic(phase2Progress);
         currentX = targetX;
         currentY = targetY * eased;
 
-        // Path shows L-shape: horizontal then vertical
         if (point.path) {
           point.path.set('data', [[0, 0, 0], [targetX, 0, 0], [targetX, currentY, 0]]);
         }
       }
 
-      // Update the existing point's position
       point.data.set('data', [[currentX, currentY, 0]]);
 
-      // Update live values
       if (window.updateLiveValues) {
         window.updateLiveValues(currentX, currentY);
       }
@@ -346,7 +321,6 @@ export class Graph2D {
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        // Animation complete - show final connecting line
         point.x = targetX;
         point.y = targetY;
         point.pathProgress = 1;
@@ -360,8 +334,6 @@ export class Graph2D {
 
         this.animatingPoint = null;
         if (window.showFinishedControls) window.showFinishedControls();
-        // Keep live values visible after replay ends
-        // Don't hide live values - user can navigate with left/right
       }
     };
 
@@ -398,7 +370,6 @@ export class Graph2D {
       opacity: 0.4,
     });
 
-    // Final connecting line (hidden initially, shown after reaching the point)
     const lineData = this.view.array({
       data: [[0, 0, 0], [0, 0, 0]],
       channels: 3,
@@ -434,28 +405,23 @@ export class Graph2D {
       let currentX, currentY;
 
       if (progress < 0.5) {
-        // Phase 1: Move along X-axis
-        const phase1Progress = progress * 2; // 0 to 1
+        const phase1Progress = progress * 2;
         const eased = this.easeInOutCubic(phase1Progress);
         currentX = targetX * eased;
         currentY = 0;
 
-        // Path shows movement along X-axis
         pathData.set('data', [[0, 0, 0], [currentX, 0, 0]]);
       } else {
-        // Phase 2: Move along Y-axis
-        const phase2Progress = (progress - 0.5) * 2; // 0 to 1
+        const phase2Progress = (progress - 0.5) * 2;
         const eased = this.easeInOutCubic(phase2Progress);
         currentX = targetX;
         currentY = targetY * eased;
 
-        // Path shows L-shape: horizontal then vertical
         pathData.set('data', [[0, 0, 0], [targetX, 0, 0], [targetX, currentY, 0]]);
       }
 
       pointData.set('data', [[currentX, currentY, 0]]);
 
-      // Update live values
       if (window.updateLiveValues) {
         window.updateLiveValues(currentX, currentY);
       }
@@ -463,13 +429,11 @@ export class Graph2D {
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        // Animation complete - show final connecting line from origin to point
         lineData.set('data', [[0, 0, 0], [targetX, targetY, 0]]);
         finalLine.set('opacity', 0.6);
 
         this.animatingPoint = null;
         if (window.showFinishedControls) window.showFinishedControls();
-        // Keep live values visible after animation ends
       }
     };
 

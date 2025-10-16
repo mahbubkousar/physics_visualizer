@@ -11,7 +11,7 @@ export class Projectile {
     this.zoomAnimation = null;
     this.zoomDuration = 800;
     this.paused = false;
-    this.animationSpeed = 1.0; // Default speed multiplier
+    this.animationSpeed = 1.0;
     this.setupGraph();
     this.createAxisLabels();
   }
@@ -32,7 +32,7 @@ export class Projectile {
     this.view.scale({
       axis: 1,
       divide: 5,
-      zero: false,  // Don't show zero tick on X-axis
+      zero: false,
     });
 
     this.view.ticks({
@@ -54,7 +54,7 @@ export class Projectile {
     this.view.scale({
       axis: 2,
       divide: 5,
-      zero: true,  // Show zero tick on Y-axis
+      zero: true,
     });
 
     this.view.ticks({
@@ -70,7 +70,7 @@ export class Projectile {
     this.view.label({
       color: 0x000000,
       size: 18,
-      offset: [-30, -30],  // Move Y-axis labels down slightly
+      offset: [-30, -30],
     });
   }
 
@@ -174,15 +174,11 @@ export class Projectile {
   }
 
   setPaused(paused) {
-    console.log('setPaused called with:', paused, 'current animating:', this.animating);
     this.paused = paused;
-    // Note: We don't try to restart animation here.
-    // The animation loop will check this.paused and continue when it becomes false.
   }
 
   setAnimationSpeed(speed) {
     this.animationSpeed = speed;
-    console.log('Animation speed set to:', speed);
   }
 
   moveLatestObject(direction) {
@@ -191,36 +187,27 @@ export class Projectile {
     const projectile = this.projectiles[this.projectiles.length - 1];
     if (projectile.finalX === undefined || projectile.finalY === undefined) return;
 
-    // Calculate trajectory and move along it
     const g = projectile.g || 9.8;
     const totalTime = projectile.totalTime || 1;
-
-    // Current time ratio
     let currentTime = 0;
     const x0 = projectile.x0;
     const y0 = projectile.y0;
     const vx = projectile.vx;
     const vy = projectile.vy;
 
-    // Find current time based on X position (since vx is constant)
     if (vx !== 0) {
       currentTime = (projectile.finalX - x0) / vx;
     }
 
-    // Move time by a small amount (shorter distance)
-    const timeShift = totalTime * 0.02; // 2% of total time
+    const timeShift = totalTime * 0.02;
     const newTime = direction === 'left' ? currentTime - timeShift : currentTime + timeShift;
-
-    // Clamp time to valid range
     const clampedTime = Math.max(0, Math.min(totalTime, newTime));
 
-    // Calculate new position on trajectory
     projectile.finalX = x0 + vx * clampedTime;
     projectile.finalY = Math.max(0, y0 + vy * clampedTime - 0.5 * g * clampedTime * clampedTime);
 
     projectile.data.set('data', [[projectile.finalX, projectile.finalY, 0]]);
 
-    // Update velocity vector
     const currentVx = vx;
     const currentVy = vy - g * clampedTime;
     const vMag = Math.sqrt(currentVx * currentVx + currentVy * currentVy);
@@ -231,11 +218,9 @@ export class Projectile {
       [projectile.finalX + (currentVx / vMag) * scale, projectile.finalY + (currentVy / vMag) * scale, 0]
     ]);
 
-    // Update live values display with velocity
     if (window.updateLiveValues) {
       window.updateLiveValues(projectile.finalX, projectile.finalY, currentVx, currentVy);
     }
-    // Show live values if not already visible
     if (window.showLiveValues) {
       window.showLiveValues(true);
     }
@@ -252,11 +237,9 @@ export class Projectile {
     const vy = projectile.vy;
     const totalTime = projectile.totalTime;
 
-    // Reset animation state
     this.animating = true;
     this.paused = false;
 
-    // Re-animate the existing projectile
     const startTime = Date.now();
     const duration = totalTime * 1000;
     let pausedTime = 0;
@@ -290,8 +273,6 @@ export class Projectile {
         delete projectile.currentX;
         delete projectile.currentY;
         if (window.showFinishedControls) window.showFinishedControls();
-        // Keep live values visible after replay ends
-        // Don't hide - user can navigate with left/right
         return;
       }
 
@@ -314,7 +295,6 @@ export class Projectile {
         [x + (currentVx / vMag) * scale, y + (currentVy / vMag) * scale, 0]
       ]);
 
-      // Update live values with velocity
       if (window.updateLiveValues) {
         window.updateLiveValues(x, y, currentVx, currentVy);
       }
@@ -436,12 +416,9 @@ export class Projectile {
         this.animating = false;
         delete projectile.currentX;
         delete projectile.currentY;
-        // Set final position for left/right navigation
         projectile.finalX = x;
         projectile.finalY = Math.max(0, y);
         if (window.showFinishedControls) window.showFinishedControls();
-        // Keep live values visible after animation ends
-        // Don't hide - user can navigate with left/right
         return;
       }
 
@@ -464,7 +441,6 @@ export class Projectile {
         [x + (currentVx / vMag) * scale, y + (currentVy / vMag) * scale, 0]
       ]);
 
-      // Update live values with velocity
       if (window.updateLiveValues) {
         window.updateLiveValues(x, y, currentVx, currentVy);
       }

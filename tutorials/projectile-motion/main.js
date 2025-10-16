@@ -5,11 +5,9 @@ import { ChatController } from '../../src/core/chat-controller.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
 import { config } from '../../config.js';
 
-// Initialize Tools Manager for main visualization
 const vizContainer = document.getElementById('visualization');
 const toolsManager = new ToolsManager(vizContainer);
 
-// Register tools
 toolsManager.registerTool('projectile', Projectile, {
   config: {
     enableZoom: false,
@@ -26,48 +24,36 @@ toolsManager.registerTool('2dgraph', Graph2D, {
   }
 });
 
-// Switch to projectile tool (since this is projectile tutorial)
 toolsManager.switchTool('projectile');
 toolsManager.startAnimation();
 
-// Make tools manager available globally
 window.toolsManager = toolsManager;
 
-// Control Elements
 const v0Input = document.getElementById('v0Input');
 const thetaInput = document.getElementById('thetaInput');
 const y0Input = document.getElementById('y0Input');
 const launchBtn = document.getElementById('launchBtn');
 const resetBtn = document.getElementById('resetBtn');
 
-// Info Elements
 const rangeValue = document.getElementById('rangeValue');
 const heightValue = document.getElementById('heightValue');
 const timeValue = document.getElementById('timeValue');
 
-// Calculate and display theoretical values
 function updateCalculatedValues() {
   const v0 = parseFloat(v0Input.value);
   const theta = parseFloat(thetaInput.value) * Math.PI / 180;
   const y0 = parseFloat(y0Input.value);
   const g = 9.8;
 
-  // Velocity components
   const vx = v0 * Math.cos(theta);
   const vy = v0 * Math.sin(theta);
 
-  // Time of flight (when y = 0)
-  // Using quadratic formula: 0 = y0 + vy*t - 0.5*g*t^2
   const discriminant = vy * vy + 2 * g * y0;
   const timeOfFlight = discriminant >= 0 ? (vy + Math.sqrt(discriminant)) / g : 0;
 
-  // Range
   const range = vx * timeOfFlight;
-
-  // Maximum height
   const maxHeight = y0 + (vy * vy) / (2 * g);
 
-  // Update display
   rangeValue.textContent = `${range.toFixed(2)} m`;
   heightValue.textContent = `${maxHeight.toFixed(2)} m`;
   timeValue.textContent = `${timeOfFlight.toFixed(2)} s`;
