@@ -11,6 +11,7 @@ export class Graph2D {
     this.zoomAnimation = null;
     this.zoomDuration = 800;
     this.paused = false;
+    this.animationSpeed = 1.0; // Default speed multiplier
     this.setupGraph();
     this.createAxisLabels();
   }
@@ -31,6 +32,7 @@ export class Graph2D {
     this.view.scale({
       axis: 1,
       divide: 5,
+      zero: false,  // Don't show zero tick on X-axis
     });
 
     this.view.ticks({
@@ -53,6 +55,7 @@ export class Graph2D {
     this.view.scale({
       axis: 2,
       divide: 5,
+      zero: true,  // Show zero tick on Y-axis
     });
 
     this.view.ticks({
@@ -69,7 +72,7 @@ export class Graph2D {
     this.view.label({
       color: 0x000000,
       size: 18,
-      offset: [-40, 0],
+      offset: [-30, -30],  // Move Y-axis labels down slightly
     });
 
   }
@@ -189,6 +192,11 @@ export class Graph2D {
     this.paused = paused;
   }
 
+  setAnimationSpeed(speed) {
+    this.animationSpeed = speed;
+    console.log('Animation speed set to:', speed);
+  }
+
   moveLatestObject(direction) {
     if (this.points.length === 0) return;
 
@@ -274,6 +282,9 @@ export class Graph2D {
       point.finalLine.set('opacity', 0);
     }
 
+    // Reset animation state
+    this.paused = false;
+
     // Just re-animate the existing point from origin
     const startTime = Date.now();
     let pausedTime = 0;
@@ -284,6 +295,9 @@ export class Graph2D {
     if (window.showLiveValues) window.showLiveValues();
 
     const animate = () => {
+      // Check if animation was stopped
+      if (this.animatingPoint === null) return;
+
       if (this.paused) {
         pausedTime += Date.now() - lastTime;
         lastTime = Date.now();
@@ -292,7 +306,7 @@ export class Graph2D {
       }
 
       lastTime = Date.now();
-      const elapsed = Date.now() - startTime - pausedTime;
+      const elapsed = (Date.now() - startTime - pausedTime) * this.animationSpeed;
       const progress = Math.min(elapsed / duration, 1);
 
       let currentX, currentY;
@@ -414,7 +428,7 @@ export class Graph2D {
       }
 
       lastTime = Date.now();
-      const elapsed = Date.now() - startTime - pausedTime;
+      const elapsed = (Date.now() - startTime - pausedTime) * this.animationSpeed;
       const progress = Math.min(elapsed / duration, 1);
 
       let currentX, currentY;

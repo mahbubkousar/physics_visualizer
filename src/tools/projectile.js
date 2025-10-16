@@ -11,6 +11,7 @@ export class Projectile {
     this.zoomAnimation = null;
     this.zoomDuration = 800;
     this.paused = false;
+    this.animationSpeed = 1.0; // Default speed multiplier
     this.setupGraph();
     this.createAxisLabels();
   }
@@ -31,6 +32,7 @@ export class Projectile {
     this.view.scale({
       axis: 1,
       divide: 5,
+      zero: false,  // Don't show zero tick on X-axis
     });
 
     this.view.ticks({
@@ -52,6 +54,7 @@ export class Projectile {
     this.view.scale({
       axis: 2,
       divide: 5,
+      zero: true,  // Show zero tick on Y-axis
     });
 
     this.view.ticks({
@@ -67,7 +70,7 @@ export class Projectile {
     this.view.label({
       color: 0x000000,
       size: 18,
-      offset: [-40, 0],
+      offset: [-30, -30],  // Move Y-axis labels down slightly
     });
   }
 
@@ -171,14 +174,15 @@ export class Projectile {
   }
 
   setPaused(paused) {
+    console.log('setPaused called with:', paused, 'current animating:', this.animating);
     this.paused = paused;
-    if (!paused && !this.animating && this.projectiles.length > 0) {
-      const lastProjectile = this.projectiles[this.projectiles.length - 1];
-      if (lastProjectile.animate) {
-        this.animating = true;
-        lastProjectile.animate();
-      }
-    }
+    // Note: We don't try to restart animation here.
+    // The animation loop will check this.paused and continue when it becomes false.
+  }
+
+  setAnimationSpeed(speed) {
+    this.animationSpeed = speed;
+    console.log('Animation speed set to:', speed);
   }
 
   moveLatestObject(direction) {
@@ -241,14 +245,16 @@ export class Projectile {
     if (this.projectiles.length === 0) return;
 
     const projectile = this.projectiles[this.projectiles.length - 1];
-    const v0 = projectile.v0;
-    const theta = projectile.theta;
     const x0 = projectile.x0;
     const y0 = projectile.y0;
     const g = projectile.g || 9.8;
     const vx = projectile.vx;
     const vy = projectile.vy;
     const totalTime = projectile.totalTime;
+
+    // Reset animation state
+    this.animating = true;
+    this.paused = false;
 
     // Re-animate the existing projectile
     const startTime = Date.now();
@@ -270,7 +276,7 @@ export class Projectile {
       }
 
       lastTime = Date.now();
-      const elapsed = Date.now() - startTime - pausedTime;
+      const elapsed = (Date.now() - startTime - pausedTime) * this.animationSpeed;
       const progress = Math.min(elapsed / duration, 1);
       const t = progress * totalTime;
 
@@ -316,7 +322,6 @@ export class Projectile {
       requestAnimationFrame(animate);
     };
 
-    this.animating = true;
     animate();
   }
 
@@ -420,7 +425,7 @@ export class Projectile {
       }
 
       lastTime = Date.now();
-      const elapsed = Date.now() - startTime - pausedTime;
+      const elapsed = (Date.now() - startTime - pausedTime) * this.animationSpeed;
       const progress = Math.min(elapsed / duration, 1);
       const t = progress * totalTime;
 

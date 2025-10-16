@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2D Graph Visualization</title>
+  <title>Physics Interactive Learning Platform</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
@@ -11,350 +11,433 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      overflow: hidden;
-      font-family: 'Arial', sans-serif;
-      background: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
     }
-    #container {
-      width: 100vw;
-      height: 100vh;
-    }
-    #toolbar {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      right: 20px;
+
+    header {
       background: rgba(255, 255, 255, 0.95);
-      padding: 10px 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
       z-index: 100;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo i {
+      font-size: 32px;
+      color: #667eea;
+    }
+
+    .logo h1 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 30px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #555;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #667eea;
+    }
+
+    .hero {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .hero h2 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero p {
+      font-size: 20px;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    .search-bar {
+      max-width: 600px;
+      margin: 0 auto 60px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 18px 50px 18px 20px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-bar i {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 18px;
+    }
+
+    .courses {
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .section-header h3 {
+      color: white;
+      font-size: 28px;
+    }
+
+    .filter-buttons {
       display: flex;
       gap: 10px;
-      overflow-x: auto;
     }
-    .tool-tab {
+
+    .filter-btn {
       padding: 10px 20px;
-      background: #ecf0f1;
-      border: none;
-      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid transparent;
+      border-radius: 25px;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
-      white-space: nowrap;
-      color: #555;
-      transition: all 0.2s;
+      transition: all 0.3s;
     }
-    .tool-tab:hover {
-      background: #bdc3c7;
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: white;
+      color: #667eea;
+      border-color: white;
     }
-    .tool-tab.active {
-      background: #3498db;
-      color: white;
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
     }
-    #controls {
-      position: absolute;
-      top: 80px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      z-index: 100;
-    }
-    #controls h3 {
-      margin: 0 0 15px 0;
-      font-size: 16px;
-      color: #333;
-    }
-    .input-group {
-      margin: 10px 0;
-    }
-    .input-group label {
-      display: inline-block;
-      width: 25px;
-      font-weight: bold;
-      color: #555;
-    }
-    #controls input {
-      width: 80px;
-      padding: 8px;
-      margin: 5px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    #controls button {
-      padding: 8px 16px;
-      margin: 5px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 4px;
+
+    .course-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
       cursor: pointer;
-      font-size: 14px;
-    }
-    #controls button:hover {
-      background: #2980b9;
-    }
-    #controls button.secondary {
-      background: #95a5a6;
-    }
-    #controls button.secondary:hover {
-      background: #7f8c8d;
-    }
-    .nav-controls {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      display: flex;
-      gap: 8px;
-      z-index: 100;
-      align-items: center;
-    }
-    .nav-btn {
-      background: none;
-      border: none;
-      color: #000;
-      cursor: pointer;
-      font-size: 18px;
-      padding: 0;
-      margin: 0;
-      line-height: 1;
-      transition: opacity 0.2s;
-    }
-    .nav-btn:hover {
-      opacity: 0.6;
-    }
-    .nav-btn.hidden {
-      display: none;
-    }
-    #liveValues {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      z-index: 101;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      line-height: 1.8;
-      color: #333;
-      display: none;
-    }
-    #liveValues.active {
+      text-decoration: none;
+      color: inherit;
       display: block;
     }
-    #liveValues .label {
-      font-weight: bold;
-      color: #555;
+
+    .course-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     }
-    #liveValues .value {
-      color: #3498db;
-      font-weight: bold;
+
+    .course-thumbnail {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .course-thumbnail i {
+      font-size: 64px;
+      color: white;
+      opacity: 0.9;
+    }
+
+    .course-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #667eea;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .course-content {
+      padding: 25px;
+    }
+
+    .course-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .course-description {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .course-meta span {
+      font-size: 13px;
+      color: #999;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .difficulty {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .difficulty.beginner {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .difficulty.intermediate {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .difficulty.advanced {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 60px;
+    }
+
+    footer p {
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 32px;
+      }
+
+      .course-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-buttons {
+        flex-wrap: wrap;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="container"></div>
-
-  <div id="liveValues">
-    <div><span class="label">X:</span> <span class="value" id="liveX">0.00</span></div>
-    <div><span class="label">Y:</span> <span class="value" id="liveY">0.00</span></div>
-    <div id="liveVelocity" style="display: none;">
-      <div><span class="label">Vx:</span> <span class="value" id="liveVx">0.00</span> m/s</div>
-      <div><span class="label">Vy:</span> <span class="value" id="liveVy">0.00</span> m/s</div>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-atom"></i>
+        <h1>Physics Learning</h1>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#courses">Courses</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </nav>
     </div>
-  </div>
+  </header>
 
-  <div id="toolbar">
-    <button class="tool-tab active" data-tool="2dgraph">2D Graph</button>
-    <button class="tool-tab" data-tool="projectile">Projectile Motion</button>
-  </div>
+  <main>
+    <section class="hero">
+      <h2>Learn Physics Interactively</h2>
+      <p>Explore physics concepts through interactive visualizations and AI-powered guidance</p>
 
-  <div id="controls">
-    <div id="controls-2dgraph" class="tool-controls">
-      <h3>2D Graph Tool</h3>
-      <div class="input-group">
-        <label>X:</label>
-        <input type="number" id="inputX" value="0" step="0.1">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search for topics, tutorials...">
+        <i class="fas fa-search"></i>
       </div>
-      <div class="input-group">
-        <label>Y:</label>
-        <input type="number" id="inputY" value="0" step="0.1">
+    </section>
+
+    <section class="courses" id="courses">
+      <div class="section-header">
+        <h3>Available Tutorials</h3>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="kinematics">Kinematics</button>
+          <button class="filter-btn" data-filter="dynamics">Dynamics</button>
+          <button class="filter-btn" data-filter="math">Mathematics</button>
+        </div>
       </div>
-      <button id="addPointBtn">Add Point</button>
-      <button id="resetBtn" class="secondary">Reset</button>
-    </div>
 
-    <div id="controls-projectile" class="tool-controls" style="display: none;">
-      <h3>Projectile Motion</h3>
-      <div class="input-group">
-        <label>v₀:</label>
-        <input type="number" id="inputV0" value="20" step="1">
-        <span style="margin-left: 5px; color: #666; font-size: 12px;">m/s</span>
+      <div class="course-grid" id="courseGrid">
+        <!-- Projectile Motion -->
+        <a href="tutorials/projectile-motion/index.html" class="course-card" data-category="kinematics">
+          <div class="course-thumbnail">
+            <i class="fas fa-baseball-ball"></i>
+            <span class="course-badge">Interactive</span>
+          </div>
+          <div class="course-content">
+            <h4 class="course-title">Projectile Motion</h4>
+            <p class="course-description">
+              Learn about parabolic trajectories, velocity components, and the physics of objects in flight.
+            </p>
+            <div class="course-meta">
+              <span><i class="fas fa-clock"></i> 30 min</span>
+              <span class="difficulty beginner">Beginner</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 2D Graphs -->
+        <a href="tutorials/2d-graphs/index.html" class="course-card" data-category="math">
+          <div class="course-thumbnail" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <i class="fas fa-chart-line"></i>
+            <span class="course-badge">Interactive</span>
+          </div>
+          <div class="course-content">
+            <h4 class="course-title">2D Graph Plotting</h4>
+            <p class="course-description">
+              Understand Cartesian coordinates, graph plotting, and visualizing mathematical relationships.
+            </p>
+            <div class="course-meta">
+              <span><i class="fas fa-clock"></i> 20 min</span>
+              <span class="difficulty beginner">Beginner</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Coming Soon Template -->
+        <div class="course-card" data-category="kinematics" style="opacity: 0.6; cursor: not-allowed;">
+          <div class="course-thumbnail" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <i class="fas fa-wave-square"></i>
+            <span class="course-badge">Coming Soon</span>
+          </div>
+          <div class="course-content">
+            <h4 class="course-title">Simple Harmonic Motion</h4>
+            <p class="course-description">
+              Explore oscillations, springs, pendulums, and periodic motion in physics.
+            </p>
+            <div class="course-meta">
+              <span><i class="fas fa-clock"></i> 35 min</span>
+              <span class="difficulty intermediate">Intermediate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add more courses as needed -->
       </div>
-      <div class="input-group">
-        <label>θ:</label>
-        <input type="number" id="inputTheta" value="45" step="1">
-        <span style="margin-left: 5px; color: #666; font-size: 12px;">deg</span>
-      </div>
-      <div class="input-group">
-        <label>x₀:</label>
-        <input type="number" id="inputX0" value="0" step="1">
-        <span style="margin-left: 5px; color: #666; font-size: 12px;">m</span>
-      </div>
-      <div class="input-group">
-        <label>y₀:</label>
-        <input type="number" id="inputY0" value="0" step="1">
-        <span style="margin-left: 5px; color: #666; font-size: 12px;">m</span>
-      </div>
-      <button id="launchBtn">Launch</button>
-      <button id="resetProjectileBtn" class="secondary">Reset</button>
-    </div>
-  </div>
+    </section>
+  </main>
 
-  <div class="nav-controls">
-    <button class="nav-btn hidden" id="leftBtn"><i class="fas fa-chevron-left"></i></button>
-    <button class="nav-btn hidden" id="pauseBtn"><i class="fas fa-pause"></i></button>
-    <button class="nav-btn hidden" id="replayBtn"><i class="fas fa-redo"></i></button>
-    <button class="nav-btn hidden" id="rightBtn"><i class="fas fa-chevron-right"></i></button>
-  </div>
+  <footer>
+    <p>&copy; 2025 Physics Learning Platform. Built with passion for education.</p>
+  </footer>
 
-  <script type="module" src="/main.js"></script>
-  <script type="module">
-    let isPaused = false;
-    let isFinished = false;
+  <script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const courseCards = document.querySelectorAll('.course-card');
 
-    // State 1: Animating - show only pause button
-    window.showControls = () => {
-      document.getElementById('pauseBtn').classList.remove('hidden');
-      document.getElementById('pauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
-      document.getElementById('leftBtn').classList.add('hidden');
-      document.getElementById('replayBtn').classList.add('hidden');
-      document.getElementById('rightBtn').classList.add('hidden');
-      isFinished = false;
-      isPaused = false;
-    };
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
 
-    // State 2: Finished - show left, replay, right (no pause/play)
-    window.showFinishedControls = () => {
-      document.getElementById('pauseBtn').classList.add('hidden');
-      document.getElementById('leftBtn').classList.remove('hidden');
-      document.getElementById('replayBtn').classList.remove('hidden');
-      document.getElementById('rightBtn').classList.remove('hidden');
-      isFinished = true;
-      isPaused = false;
-    };
+      courseCards.forEach(card => {
+        const title = card.querySelector('.course-title')?.textContent.toLowerCase() || '';
+        const description = card.querySelector('.course-description')?.textContent.toLowerCase() || '';
 
-    // State 3: Hide all
-    window.hideControls = () => {
-      document.getElementById('pauseBtn').classList.add('hidden');
-      document.getElementById('leftBtn').classList.add('hidden');
-      document.getElementById('replayBtn').classList.add('hidden');
-      document.getElementById('rightBtn').classList.add('hidden');
-      isFinished = false;
-      isPaused = false;
-    };
-
-    // Pause button toggles between pause and play
-    document.getElementById('pauseBtn').addEventListener('click', () => {
-      if (isFinished) return; // Don't allow pause when finished
-
-      isPaused = !isPaused;
-      const pauseBtn = document.getElementById('pauseBtn');
-      const leftBtn = document.getElementById('leftBtn');
-      const rightBtn = document.getElementById('rightBtn');
-
-      if (isPaused) {
-        // State 4: Paused - show play + left + right (no replay)
-        pauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        leftBtn.classList.remove('hidden');
-        rightBtn.classList.remove('hidden');
-      } else {
-        // Back to animating - show only pause
-        pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        leftBtn.classList.add('hidden');
-        rightBtn.classList.add('hidden');
-      }
-      window.togglePause(isPaused);
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     });
 
-    document.getElementById('leftBtn').addEventListener('click', () => {
-      window.moveObject('left');
-    });
+    // Filter functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
 
-    document.getElementById('rightBtn').addEventListener('click', () => {
-      window.moveObject('right');
-    });
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Update active button
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
 
-    document.getElementById('replayBtn').addEventListener('click', () => {
-      window.replayAnimation();
-    });
+        const filter = button.dataset.filter;
 
-    // Live values display functions
-    window.showLiveValues = (showVelocity = false) => {
-      document.getElementById('liveValues').classList.add('active');
-      if (showVelocity) {
-        document.getElementById('liveVelocity').style.display = 'block';
-      } else {
-        document.getElementById('liveVelocity').style.display = 'none';
-      }
-    };
-
-    window.hideLiveValues = () => {
-      document.getElementById('liveValues').classList.remove('active');
-    };
-
-    window.updateLiveValues = (x, y, vx = null, vy = null) => {
-      document.getElementById('liveX').textContent = x.toFixed(2);
-      document.getElementById('liveY').textContent = y.toFixed(2);
-      if (vx !== null && vy !== null) {
-        document.getElementById('liveVx').textContent = vx.toFixed(2);
-        document.getElementById('liveVy').textContent = vy.toFixed(2);
-      }
-    };
-
-    document.getElementById('addPointBtn').addEventListener('click', () => {
-      const x = parseFloat(document.getElementById('inputX').value);
-      const y = parseFloat(document.getElementById('inputY').value);
-      const colors = [0x3498db, 0xe74c3c, 0x2ecc71, 0xf39c12, 0x9b59b6];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      window.addPoint(x, y, color);
-    });
-
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      window.resetTool();
-    });
-
-    document.getElementById('launchBtn').addEventListener('click', () => {
-      const v0 = parseFloat(document.getElementById('inputV0').value);
-      const theta = parseFloat(document.getElementById('inputTheta').value);
-      const x0 = parseFloat(document.getElementById('inputX0').value);
-      const y0 = parseFloat(document.getElementById('inputY0').value);
-      const colors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      window.launchProjectile(v0, theta, x0, y0, color);
-    });
-
-    document.getElementById('resetProjectileBtn').addEventListener('click', () => {
-      window.resetTool();
-    });
-
-    document.querySelectorAll('.tool-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        const toolName = tab.dataset.tool;
-
-        document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        document.querySelectorAll('.tool-controls').forEach(c => c.style.display = 'none');
-        document.getElementById(`controls-${toolName}`).style.display = 'block';
-
-        window.switchTool(toolName);
+        courseCards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
       });
     });
   </script>

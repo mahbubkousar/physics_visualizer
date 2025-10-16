@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projectile Motion Tutorial</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../../public/css/tutorial.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="tutorial-nav">
+    <div class="nav-content">
+      <a href="../../index.html" class="nav-home">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </a>
+      <h1>Projectile Motion</h1>
+      <div class="nav-progress">
+        <span>Tutorial Progress: <strong>0%</strong></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="tutorial-container">
+    <!-- Introduction Section -->
+    <section class="tutorial-section intro-section">
+      <div class="section-content">
+        <h2><i class="fas fa-book-open"></i> Introduction</h2>
+        <p class="lead">
+          Projectile motion describes the motion of an object thrown or projected into the air, subject only to gravity.
+          This is one of the most fundamental concepts in physics and has applications in sports, engineering, and space exploration.
+        </p>
+
+        <div class="key-concepts">
+          <h3>Key Concepts</h3>
+          <ul>
+            <li><strong>Trajectory:</strong> The parabolic path followed by a projectile</li>
+            <li><strong>Initial Velocity (v₀):</strong> The speed at which the object is launched</li>
+            <li><strong>Launch Angle (θ):</strong> The angle at which the object is projected</li>
+            <li><strong>Range:</strong> The horizontal distance traveled by the projectile</li>
+            <li><strong>Maximum Height:</strong> The highest point reached by the projectile</li>
+          </ul>
+        </div>
+
+        <div class="formula-box">
+          <h3>Key Equations</h3>
+          <div class="formula">
+            <span class="formula-label">Horizontal Position:</span>
+            <span class="formula-eq">x = x₀ + v₀·cos(θ)·t</span>
+          </div>
+          <div class="formula">
+            <span class="formula-label">Vertical Position:</span>
+            <span class="formula-eq">y = y₀ + v₀·sin(θ)·t - ½·g·t²</span>
+          </div>
+          <div class="formula">
+            <span class="formula-label">Range:</span>
+            <span class="formula-eq">R = (v₀²·sin(2θ))/g</span>
+          </div>
+          <div class="formula">
+            <span class="formula-label">Maximum Height:</span>
+            <span class="formula-eq">H = (v₀²·sin²(θ))/(2g)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Visualization Section -->
+    <section class="tutorial-section viz-section">
+      <div class="section-header">
+        <h2><i class="fas fa-eye"></i> Interactive Visualization</h2>
+        <p>Experiment with different parameters to see how they affect projectile motion</p>
+      </div>
+
+      <div class="viz-container">
+        <div class="viz-display">
+          <div id="visualization"></div>
+
+          <!-- Minimal Speed & Navigation Controls -->
+          <div class="speed-nav-controls" id="speedNavControls">
+            <select id="speedSelect" class="speed-dropdown" title="Animation Speed">
+              <option value="0.25">0.25x</option>
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+            </select>
+            <button class="nav-btn" id="prevBtn" title="Previous Frame" style="display: none;">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nav-btn" id="nextBtn" title="Next Frame" style="display: none;">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Live Values Display -->
+          <div class="live-values" id="liveValues" style="display: none;">
+            <div class="live-value-item">
+              <span class="live-label">X:</span>
+              <span class="live-value" id="liveX">0.00</span>
+              <span class="live-unit">m</span>
+            </div>
+            <div class="live-value-item">
+              <span class="live-label">Y:</span>
+              <span class="live-value" id="liveY">0.00</span>
+              <span class="live-unit">m</span>
+            </div>
+            <div class="live-value-item velocity" id="liveVelocity" style="display: none;">
+              <span class="live-label">V:</span>
+              <span class="live-value" id="liveV">0.00</span>
+              <span class="live-unit">m/s</span>
+            </div>
+          </div>
+
+          <!-- Animation Controls -->
+          <div class="animation-controls" id="animationControls" style="display: none;">
+            <button class="anim-btn" id="playPauseBtn" title="Play/Pause">
+              <i class="fas fa-pause"></i>
+            </button>
+            <button class="anim-btn" id="replayBtn" title="Replay">
+              <i class="fas fa-redo"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="viz-controls">
+          <h3>Controls</h3>
+
+          <div class="control-group">
+            <label>
+              <span>Initial Velocity (v₀)</span>
+              <input type="number" id="v0Input" value="20" min="1" max="50" step="1">
+              <span class="unit">m/s</span>
+            </label>
+          </div>
+
+          <div class="control-group">
+            <label>
+              <span>Launch Angle (θ)</span>
+              <input type="number" id="thetaInput" value="45" min="0" max="90" step="5">
+              <span class="unit">degrees</span>
+            </label>
+          </div>
+
+          <div class="control-group">
+            <label>
+              <span>Initial Height (y₀)</span>
+              <input type="number" id="y0Input" value="0" min="0" max="20" step="1">
+              <span class="unit">m</span>
+            </label>
+          </div>
+
+          <div class="control-buttons">
+            <button id="launchBtn" class="btn-primary">
+              <i class="fas fa-play"></i> Launch
+            </button>
+            <button id="resetBtn" class="btn-secondary">
+              <i class="fas fa-redo"></i> Reset
+            </button>
+          </div>
+
+          <div class="viz-info">
+            <h4>Calculated Values</h4>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Range:</span>
+                <span class="info-value" id="rangeValue">--</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Max Height:</span>
+                <span class="info-value" id="heightValue">--</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Time of Flight:</span>
+                <span class="info-value" id="timeValue">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Static Examples Section -->
+    <section class="tutorial-section examples-section">
+      <div class="section-content">
+        <h2><i class="fas fa-lightbulb"></i> Example Problems</h2>
+
+        <div class="example-card">
+          <div class="example-header">
+            <h3>Example 1: Basketball Shot</h3>
+            <span class="difficulty-badge beginner">Beginner</span>
+          </div>
+          <div class="example-body">
+            <p><strong>Problem:</strong> A basketball player shoots a ball at 8 m/s at an angle of 60° from a height of 2m. How far does the ball travel horizontally before hitting the ground?</p>
+
+            <details>
+              <summary>Show Solution</summary>
+              <div class="solution">
+                <p><strong>Given:</strong></p>
+                <ul>
+                  <li>v₀ = 8 m/s</li>
+                  <li>θ = 60°</li>
+                  <li>y₀ = 2 m</li>
+                  <li>g = 9.8 m/s²</li>
+                </ul>
+
+                <p><strong>Step 1:</strong> Find vertical component: v_y = 8·sin(60°) = 6.93 m/s</p>
+                <p><strong>Step 2:</strong> Find horizontal component: v_x = 8·cos(60°) = 4 m/s</p>
+                <p><strong>Step 3:</strong> Find time to hit ground using: y = y₀ + v_y·t - ½·g·t²</p>
+                <p>0 = 2 + 6.93t - 4.9t² → t ≈ 1.64 s</p>
+                <p><strong>Step 4:</strong> Find range: R = v_x·t = 4 × 1.64 = 6.56 m</p>
+
+                <p class="answer"><strong>Answer:</strong> The ball travels approximately 6.56 meters horizontally.</p>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <div class="example-card">
+          <div class="example-header">
+            <h3>Example 2: Maximum Range</h3>
+            <span class="difficulty-badge intermediate">Intermediate</span>
+          </div>
+          <div class="example-body">
+            <p><strong>Problem:</strong> At what angle should you launch a projectile to achieve maximum range? Prove your answer mathematically.</p>
+
+            <details>
+              <summary>Show Solution</summary>
+              <div class="solution">
+                <p><strong>Given:</strong> Range formula R = (v₀²·sin(2θ))/g</p>
+
+                <p><strong>Step 1:</strong> To maximize R, we need to maximize sin(2θ)</p>
+                <p><strong>Step 2:</strong> The maximum value of sin(x) is 1, which occurs when x = 90°</p>
+                <p><strong>Step 3:</strong> Therefore, 2θ = 90° → θ = 45°</p>
+
+                <p class="answer"><strong>Answer:</strong> A launch angle of 45° gives maximum range (assuming no air resistance and level ground).</p>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary Section -->
+    <section class="tutorial-section summary-section">
+      <div class="section-content">
+        <h2><i class="fas fa-check-circle"></i> Summary</h2>
+
+        <div class="summary-grid">
+          <div class="summary-card">
+            <h3>What We Learned</h3>
+            <ul>
+              <li>Projectile motion follows a parabolic path</li>
+              <li>Horizontal and vertical motions are independent</li>
+              <li>45° angle gives maximum range</li>
+              <li>Time of flight depends only on vertical motion</li>
+            </ul>
+          </div>
+
+          <div class="summary-card">
+            <h3>Key Takeaways</h3>
+            <ul>
+              <li>Break velocity into components (v_x and v_y)</li>
+              <li>Use kinematic equations for each direction</li>
+              <li>Gravity only affects vertical motion</li>
+              <li>Horizontal velocity remains constant</li>
+            </ul>
+          </div>
+
+          <div class="summary-card">
+            <h3>Real-World Applications</h3>
+            <ul>
+              <li>Sports (basketball, football, golf)</li>
+              <li>Artillery and ballistics</li>
+              <li>Space vehicle trajectories</li>
+              <li>Water fountains and sprinkler systems</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Chat Section (at bottom) -->
+    <section class="tutorial-section chat-section">
+      <div class="section-header">
+        <h2><i class="fas fa-comments"></i> Ask AI Tutor</h2>
+        <p>Have questions? Ask our AI tutor for personalized help and custom visualizations</p>
+      </div>
+
+      <div class="chat-viz-container">
+        <!-- Sidebar Chat -->
+        <div class="chat-sidebar">
+          <div class="chat-messages" id="chatMessages">
+            <div class="message assistant">
+              <p>Hello! I'm your AI physics tutor. Ask me anything about projectile motion, or request a custom visualization!</p>
+              <p class="hint">Try: "Show me a projectile launched at 30 m/s at 60 degrees"</p>
+            </div>
+          </div>
+
+          <div class="typing-indicator" id="typingIndicator">
+            <span></span><span></span><span></span>
+          </div>
+
+          <div class="chat-input-container">
+            <textarea id="chatInput" placeholder="Ask a question or request a visualization..." rows="2"></textarea>
+            <button id="sendBtn" class="btn-send">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Visualization Panel for Chat -->
+        <div class="chat-viz-panel">
+          <div id="chatVisualization"></div>
+          <div class="viz-placeholder">
+            <i class="fas fa-chart-area"></i>
+            <p>Visualizations from your questions will appear here</p>
+          </div>
+
+          <!-- Minimal Speed & Navigation Controls for Chat -->
+          <div class="speed-nav-controls" id="chatSpeedNavControls">
+            <select id="chatSpeedSelect" class="speed-dropdown" title="Animation Speed">
+              <option value="0.25">0.25x</option>
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+            </select>
+            <button class="nav-btn" id="chatPrevBtn" title="Previous Frame" style="display: none;">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nav-btn" id="chatNextBtn" title="Next Frame" style="display: none;">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- Live Values Display for Chat -->
+          <div class="live-values" id="chatLiveValues" style="display: none;">
+            <div class="live-value-item">
+              <span class="live-label">X:</span>
+              <span class="live-value" id="chatLiveX">0.00</span>
+              <span class="live-unit">m</span>
+            </div>
+            <div class="live-value-item">
+              <span class="live-label">Y:</span>
+              <span class="live-value" id="chatLiveY">0.00</span>
+              <span class="live-unit">m</span>
+            </div>
+            <div class="live-value-item velocity" id="chatLiveVelocity" style="display: none;">
+              <span class="live-label">V:</span>
+              <span class="live-value" id="chatLiveV">0.00</span>
+              <span class="live-unit">m/s</span>
+            </div>
+          </div>
+
+          <!-- Animation Controls for Chat Viz -->
+          <div class="animation-controls" id="chatAnimationControls" style="display: none;">
+            <button class="anim-btn" id="chatPlayPauseBtn" title="Play/Pause">
+              <i class="fas fa-pause"></i>
+            </button>
+            <button class="anim-btn" id="chatReplayBtn" title="Replay">
+              <i class="fas fa-redo"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="tutorial-footer">
+    <div class="footer-content">
+      <div class="footer-nav">
+        <a href="../2d-graphs/index.html" class="prev-tutorial">
+          <i class="fas fa-chevron-left"></i> Previous: 2D Graphs
+        </a>
+        <a href="../../index.html" class="back-home">
+          Back to Home
+        </a>
+        <a href="#" class="next-tutorial disabled">
+          Next Tutorial <i class="fas fa-chevron-right"></i>
+        </a>
+      </div>
+      <p>&copy; 2025 Physics Learning Platform</p>
+    </div>
+  </footer>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
