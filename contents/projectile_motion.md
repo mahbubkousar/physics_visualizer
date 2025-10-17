@@ -86,20 +86,7 @@ Let's see how these two components work together. The visualization below shows 
 *   The **wall shadow** moves up, slows down, stops at the peak, and then accelerates down.
 
 [VISUALIZATION_ENGINE: STATIC_PROJECTILE]
-<!-- 
-Developer's Note: 
-- This is an interactive static visualization generator.
-- Provide sliders or input boxes for the user:
-    - `Initial Velocity (v₀)`: Range 10 m/s to 100 m/s.
-    - `Launch Angle (θ)`: Range 0° to 90°.
-    - `Initial Height (y₀)`: Range 0 m to 50 m.
-- When the user clicks "Launch!", animate the following:
-    1. A ball following the calculated parabolic trajectory.
-    2. A "shadow" of the ball on the x-axis, moving at a constant `v_x`.
-    3. A "shadow" of the ball on the y-axis, moving up and down with acceleration `-g`.
-    4. Optional: Display the velocity vector (with its x and y components) attached to the ball as it moves.
-- Display the calculated results after the animation finishes: Max Height, Time of Flight, Range.
--->
+
 
 ---
 
@@ -145,16 +132,7 @@ Here are the essential equations you'll need. Don't just memorize them; understa
     *   `R = v_x * T = 86.6 * 10.2 = 883.3 m`
 
 [VISUALIZATION_ENGINE: EXAMPLE_1_CANNONBALL]
-<!-- 
-Developer's Note: 
-- This is a non-interactive, pre-rendered visualization based on the example above.
-- Use the parameters: `v₀ = 100 m/s`, `θ = 30°`, `y₀ = 0`.
-- Display the trajectory.
-- Annotate the final plot with labels:
-    - "Max Height: 127.4 m" at the peak.
-    - "Range: 883.3 m" at the landing point.
-    - "Time of Flight: 10.2 s".
--->
+
 
 ---
 
@@ -238,29 +216,3 @@ Developer's Note:
 You've learned the theory, now it's time to experiment! Use plain English to command the visualizer. Ask it questions, change the parameters, and see what happens.
 
 [VISUALIZER_ENGINE: CHAT_CONTROLLED_PROJECTILE]
-<!-- 
-Developer's Note:
-- This section contains two main components: a chat interface and a visualization canvas.
-- The visualization canvas is powered by the same engine as the static ones but is controlled by parameters extracted from the chat.
-- The user types in the chat box and hits enter.
-- The input is sent to a backend LLM (like Gemini).
-- The LLM is prompted to act as a "physics visualizer assistant". Its goal is to extract key parameters from the user's text (e.g., initial velocity, angle, height, mass, air drag coefficient) or answer questions.
-- The LLM should respond in a structured format, like JSON.
-  - For a plot command: `{ "action": "plot", "parameters": { "v0": 30, "angle": 60, "y0": 10 }, "response_text": "Okay, plotting a projectile launched at 30 m/s from a height of 10 meters at a 60-degree angle." }`
-  - For a question: `{ "action": "answer", "response_text": "The maximum height for that launch was 55.7 meters." }`
-- The backend receives this JSON. If `action` is `plot`, it runs the visualizer with the given parameters. The `response_text` is displayed in the chat log.
-- The chat log should show both user prompts and assistant responses.
--->
-
-**Try prompts like these:**
-
-*   "Plot a projectile launched at 50 m/s at an angle of 45 degrees."
-*   "What is its maximum height?"
-*   "Now, plot another one on the same graph but with an angle of 60 degrees."
-*   "Clear the graph."
-*   "Launch a projectile from a 100m cliff with a horizontal velocity of 20 m/s."
-*   "How long does it take to hit the ground?"
-*   "What if we add air resistance? Set a drag coefficient of 0.2."
-
-[CHAT_LOG_DISPLAY]
-[CHAT_INPUT_BOX: Type your command or question here...]

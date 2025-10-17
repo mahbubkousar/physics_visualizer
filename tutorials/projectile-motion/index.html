@@ -3,9 +3,912 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projectile Motion Tutorial</title>
+  <title>Projectile Motion - Asymptote Learn</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="../../public/css/tutorial.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            console.log('MathJax initial typesetting complete');
+          });
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background:
+        radial-gradient(circle 900px at 85% 5%, #dbeafe 0%, transparent 60%),
+        radial-gradient(circle 700px at 15% 95%, #ede9fe 0%, transparent 60%),
+        #fafbfc;
+      min-height: 100vh;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    .tutorial-nav {
+      background: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid #e8eaed;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-content {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-home {
+      text-decoration: none;
+      color: #2c3e50;
+      font-weight: 500;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .nav-home:hover {
+      opacity: 0.7;
+    }
+
+    .nav-content h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      letter-spacing: -0.3px;
+      flex: 1;
+    }
+
+    .nav-stats {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .progress-indicator, .score-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .progress-indicator i, .score-indicator i {
+      font-size: 14px;
+      color: #2c3e50;
+    }
+
+    .progress-bar-container {
+      height: 3px;
+      background: #e8eaed;
+      width: 100%;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2c3e50, #3b82f6);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Main Container */
+    .tutorial-container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 80px 40px 120px;
+    }
+
+    /* Section Styles */
+    .tutorial-section {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin-bottom: 96px;
+      position: relative;
+      scroll-margin-top: 80px;
+    }
+
+    .tutorial-section h2 {
+      font-size: 32px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 40px;
+      letter-spacing: -0.7px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e8eaed;
+    }
+
+    .tutorial-section h2 i {
+      font-size: 28px;
+      color: #2c3e50;
+      margin-right: 12px;
+    }
+
+    .tutorial-section h3 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 48px 0 20px;
+      letter-spacing: -0.4px;
+    }
+
+    .tutorial-section h4 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #2c3e50;
+      margin: 32px 0 16px;
+      letter-spacing: -0.2px;
+    }
+
+    .tutorial-section p {
+      color: #374151;
+      line-height: 1.8;
+      margin-bottom: 24px;
+      font-size: 16px;
+    }
+
+    .tutorial-section ul, .tutorial-section ol {
+      margin: 24px 0;
+      padding-left: 28px;
+      color: #374151;
+      line-height: 1.8;
+    }
+
+    .tutorial-section li {
+      margin-bottom: 12px;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .tutorial-section li strong {
+      color: #1a1a1a;
+    }
+
+    /* Hero Intro */
+    .hero-intro {
+      text-align: center;
+      padding: 48px 0 80px;
+      border: none;
+      background: transparent;
+    }
+
+    .hero-intro h1 {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 24px;
+      letter-spacing: -1.5px;
+      line-height: 1.2;
+    }
+
+    .hero-intro .subtitle {
+      font-size: 19px;
+      color: #6b7280;
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-weight: 400;
+    }
+
+    /* Key Concept Box */
+    .key-idea {
+      background: rgba(59, 130, 246, 0.03);
+      border-left: 3px solid #3b82f6;
+      padding: 32px;
+      margin: 40px 0;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .key-idea strong {
+      color: #1e40af;
+      font-weight: 600;
+    }
+
+    .key-idea p {
+      margin-bottom: 16px;
+    }
+
+    .key-idea ol {
+      margin: 16px 0 0 0;
+      padding-left: 24px;
+    }
+
+    /* Definition Box */
+    .definition-box {
+      background: rgba(44, 62, 80, 0.03);
+      border-left: 3px solid #2c3e50;
+      padding: 28px 32px;
+      margin: 40px 0;
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.8;
+      color: #374151;
+    }
+
+    /* Formula Box */
+    .formula-box {
+      background: #ffffff;
+      border: 1px solid #e8eaed;
+      padding: 32px;
+      margin: 40px 0;
+    }
+
+    .formula-box h3 {
+      color: #1a1a1a;
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .formula-item {
+      background: #f8f9fa;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: #1a1a1a;
+      border-left: 3px solid #e8eaed;
+    }
+
+    /* Visualization Container */
+    .viz-wrapper {
+      margin: 48px 0;
+      background: #ffffff;
+      border: 1px solid #e8eaed;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .viz-display-section {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .viz-canvas {
+      width: 100%;
+      height: 500px;
+      background: #fafbfc;
+      border: 1px solid #e8eaed;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .viz-canvas > * {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .viz-canvas canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+      position: static !important;
+    }
+
+    .viz-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-group label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .control-group input {
+      padding: 8px 12px;
+      border: 1px solid #e8eaed;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .viz-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn-run, .btn-reset {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-run {
+      background: #2c3e50;
+      color: #fff;
+    }
+
+    .btn-run:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    .btn-reset {
+      background: #e8eaed;
+      color: #4b5563;
+    }
+
+    .btn-reset:hover {
+      background: #d1d5db;
+    }
+
+    /* Quiz Section */
+    .quiz-question {
+      background: #ffffff;
+      padding: 32px;
+      margin: 40px 0;
+      border: 1px solid #e8eaed;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .quiz-question h4 {
+      margin-top: 0;
+      color: #1a1a1a;
+    }
+
+    .quiz-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e8eaed;
+      border-radius: 8px;
+      font-size: 14px;
+      margin: 12px 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #fff;
+      border: 2px solid #e8eaed;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover {
+      border-color: #2c3e50;
+      background: #f8f9fa;
+    }
+
+    .quiz-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-check {
+      padding: 10px 24px;
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-check:hover {
+      background: #2563eb;
+    }
+
+    .quiz-feedback {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .quiz-feedback.correct {
+      background: #d1fae5;
+      border: 1px solid #6ee7b7;
+      color: #065f46;
+    }
+
+    .quiz-feedback.incorrect {
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      color: #991b1b;
+    }
+
+    /* Descriptive Test */
+    .descriptive-question {
+      background: #ffffff;
+      padding: 32px;
+      margin: 40px 0;
+      border: 1px solid #e8eaed;
+      border-left: 3px solid #8b5cf6;
+    }
+
+    .descriptive-textarea {
+      width: 100%;
+      min-height: 150px;
+      padding: 16px;
+      border: 1px solid #e8eaed;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      resize: vertical;
+      margin: 16px 0;
+    }
+
+    .btn-submit {
+      padding: 12px 28px;
+      background: #8b5cf6;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: #7c3aed;
+    }
+
+    .ai-feedback {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f0f9ff;
+      border-left: 4px solid #3b82f6;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .ai-feedback.visible {
+      display: block;
+    }
+
+    .ai-score {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 12px;
+    }
+
+    /* Chat Section Styles */
+    .chat-container {
+      background: #ffffff;
+      border: 1px solid #e8eaed;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+
+    .chat-grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 24px;
+      height: 580px;
+    }
+
+    .chat-panel {
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #e8eaed;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      height: 100%;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      scroll-behavior: smooth;
+      background: #f9fafb;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 3px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+
+    .chat-message {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.5;
+      animation: messageSlideIn 0.25s ease-out;
+      word-wrap: break-word;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .chat-message.user {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      margin-left: auto;
+    }
+
+    .chat-message.assistant {
+      background: #ffffff;
+      color: #1f2937;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border: 1px solid #e5e7eb;
+      margin-right: auto;
+    }
+
+    .chat-input-area {
+      padding: 12px 16px;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      resize: none;
+      transition: all 0.2s;
+      background: #f9fafb;
+      max-height: 100px;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #2c3e50;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+    }
+
+    .chat-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .chat-send-btn {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(44, 62, 80, 0.2);
+    }
+
+    .chat-send-btn:hover {
+      background: linear-gradient(135deg, #1e293b 0%, #2c3e50 100%);
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(44, 62, 80, 0.3);
+    }
+
+    .chat-send-btn:active {
+      transform: scale(0.95);
+    }
+
+    .chat-send-btn i {
+      margin-left: 2px;
+    }
+
+    .chat-viz-panel {
+      background: #fafbfc;
+      border-radius: 8px;
+      border: 1px solid #e8eaed;
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      padding: 20px;
+    }
+
+    .chat-viz-placeholder {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .chat-viz-panel canvas {
+      position: absolute !important;
+      top: 20px !important;
+      left: 20px !important;
+      right: 20px !important;
+      bottom: 20px !important;
+      width: calc(100% - 40px) !important;
+      height: calc(100% - 40px) !important;
+      display: block !important;
+    }
+
+    /* Floating Buttons */
+    .floating-toc, .floating-ai {
+      position: fixed;
+      bottom: 32px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s;
+      z-index: 50;
+    }
+
+    .floating-toc {
+      left: 32px;
+    }
+
+    .floating-ai {
+      right: 32px;
+    }
+
+    .floating-toc:hover, .floating-ai:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    /* TOC Panel */
+    .toc-panel {
+      position: fixed;
+      bottom: 100px;
+      left: 32px;
+      width: 300px;
+      max-height: 500px;
+      background: #fff;
+      border: 1px solid #e8eaed;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 20px;
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s;
+      z-index: 49;
+      overflow-y: auto;
+    }
+
+    .toc-panel.active {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .toc-panel h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #1a1a1a;
+    }
+
+    .toc-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .toc-list li {
+      margin-bottom: 8px;
+    }
+
+    .toc-list a {
+      text-decoration: none;
+      color: #4b5563;
+      font-size: 14px;
+      display: block;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .toc-list a:hover {
+      background: #f3f4f6;
+      color: #1a1a1a;
+    }
+
+    .toc-list a.active {
+      background: #e0f2fe;
+      color: #1e40af;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .tutorial-container {
+        padding: 48px 20px 100px;
+        max-width: 100%;
+      }
+
+      .tutorial-section {
+        margin-bottom: 72px;
+      }
+
+      .tutorial-section h2 {
+        font-size: 28px;
+        margin-bottom: 32px;
+      }
+
+      .tutorial-section h3 {
+        font-size: 20px;
+        margin-top: 40px;
+      }
+
+      .tutorial-section p, .tutorial-section li {
+        font-size: 15px;
+      }
+
+      .hero-intro {
+        padding: 32px 0 60px;
+      }
+
+      .hero-intro h1 {
+        font-size: 36px;
+        letter-spacing: -1px;
+      }
+
+      .hero-intro .subtitle {
+        font-size: 17px;
+      }
+
+      .nav-stats {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+      }
+
+      .floating-toc, .floating-ai {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+        bottom: 24px;
+      }
+
+      .floating-toc {
+        left: 20px;
+      }
+
+      .floating-ai {
+        right: 20px;
+      }
+
+      .toc-panel {
+        width: calc(100% - 48px);
+        left: 24px;
+        bottom: 84px;
+      }
+
+      .quiz-question, .descriptive-question, .viz-wrapper {
+        padding: 24px;
+      }
+
+      .key-idea, .definition-box, .formula-box {
+        padding: 24px;
+        margin: 32px 0;
+      }
+
+      .viz-display-section {
+        grid-template-columns: 1fr;
+      }
+
+      .viz-canvas {
+        height: 400px;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation -->
@@ -15,376 +918,387 @@
         <i class="fas fa-arrow-left"></i> Back to Home
       </a>
       <h1>Projectile Motion</h1>
-      <div class="nav-progress">
-        <span>Tutorial Progress: <strong>0%</strong></span>
+      <div class="nav-stats">
+        <div class="progress-indicator">
+          <i class="fas fa-chart-line"></i>
+          <span>Progress: <strong id="progressPercent">0%</strong></span>
+        </div>
+        <div class="score-indicator">
+          <i class="fas fa-star"></i>
+          <span>Score: <strong id="scoreDisplay">0/100</strong></span>
+        </div>
       </div>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progressBarFill"></div>
     </div>
   </nav>
 
   <!-- Main Content -->
   <main class="tutorial-container">
-    <!-- Introduction Section -->
-    <section class="tutorial-section intro-section">
-      <div class="section-content">
-        <h2><i class="fas fa-book-open"></i> Introduction</h2>
-        <p class="lead">
-          Projectile motion describes the motion of an object thrown or projected into the air, subject only to gravity.
-          This is one of the most fundamental concepts in physics and has applications in sports, engineering, and space exploration.
-        </p>
+    <!-- Hero Introduction -->
+    <section class="hero-intro">
+      <h1>Projectile Motion: The Art of Throwing Things</h1>
+      <p class="subtitle">Ever wondered about the graceful arc of a basketball heading for the hoop, or the path a cannonball takes? That's projectile motion in action! By the end of this tutorial, you'll not only understand it but will be able to predict it.</p>
+    </section>
 
-        <div class="key-concepts">
-          <h3>Key Concepts</h3>
+    <!-- Section 1: What is Projectile Motion? -->
+    <section class="tutorial-section" id="section-1" data-section="1">
+      <h2><i class="fas fa-lightbulb"></i> What is Projectile Motion?</h2>
+
+      <p>Imagine you're in a car moving at a steady 50 km/h and you drop a ball out the window. From your perspective inside the car, the ball just drops straight down. But to someone standing on the sidewalk, the ball follows a curved path forward and down.</p>
+
+      <div class="key-idea">
+        <p><strong>This is the single most important idea: Projectile motion is two simple motions happening at the same time.</strong></p>
+        <ol>
+          <li><strong>Horizontal Motion:</strong> The ball keeps moving forward at a constant speed (just like the car).</li>
+          <li><strong>Vertical Motion:</strong> The ball is pulled straight down by gravity, accelerating as it falls.</li>
+        </ol>
+      </div>
+
+      <p>Our entire analysis of projectile motion is based on splitting a complex curved path into these two super-simple, independent parts.</p>
+    </section>
+
+    <!-- Section 2: Definition & Assumptions -->
+    <section class="tutorial-section" id="section-2" data-section="2">
+      <h2><i class="fas fa-book"></i> Formal Definition & Key Assumptions</h2>
+
+      <div class="definition-box">
+        <strong>Definition:</strong> A <strong>projectile</strong> is any object that is thrown, shot, or launched into the air and then moves only under the influence of gravity. The path it follows is called its <strong>trajectory</strong>.
+      </div>
+
+      <p>To make our calculations work, we start with a few simplifying assumptions:</p>
+      <ul>
+        <li><strong>Assumption 1:</strong> Air resistance is ignored. We pretend there's no air slowing the object down.</li>
+        <li><strong>Assumption 2:</strong> The acceleration due to gravity, $g$, is constant. We'll use $g = 9.81 \text{ m/s}^2$. It always points straight down.</li>
+        <li><strong>Assumption 3:</strong> The Earth's rotation is ignored.</li>
+      </ul>
+    </section>
+
+    <!-- Section 3: The Two Components -->
+    <section class="tutorial-section" id="section-3" data-section="3">
+      <h2><i class="fas fa-project-diagram"></i> The Two Components: A Deeper Look</h2>
+
+      <p>Let's break down the motion of an object launched with an initial velocity $v_0$ at an angle $\theta$ from the ground.</p>
+
+      <h3>Horizontal Motion (The Easy Part)</h3>
+      <ul>
+        <li><strong>Force:</strong> Zero (since we ignore air resistance).</li>
+        <li><strong>Acceleration:</strong> Zero.</li>
+        <li><strong>Velocity ($v_x$):</strong> <strong>Constant!</strong> It never changes throughout the flight.</li>
+        <li><strong>Formula:</strong> $x = v_x \cdot t$</li>
+      </ul>
+
+      <h3>Vertical Motion (Just Like Dropping a Ball)</h3>
+      <ul>
+        <li><strong>Force:</strong> Gravity ($F = mg$), pointing down.</li>
+        <li><strong>Acceleration ($a_y$):</strong> Constant, equal to $-g$ (approx. $-9.81 \text{ m/s}^2$). It's negative because it points downward.</li>
+        <li><strong>Velocity ($v_y$):</strong> Changes continuously. It starts positive (upwards), becomes zero at the very top of the arc, and then becomes negative (downwards).</li>
+        <li><strong>Formulas:</strong>
           <ul>
-            <li><strong>Trajectory:</strong> The parabolic path followed by a projectile</li>
-            <li><strong>Initial Velocity (v₀):</strong> The speed at which the object is launched</li>
-            <li><strong>Launch Angle (θ):</strong> The angle at which the object is projected</li>
-            <li><strong>Range:</strong> The horizontal distance traveled by the projectile</li>
-            <li><strong>Maximum Height:</strong> The highest point reached by the projectile</li>
+            <li>$v_y(t) = v_{y0} - g \cdot t$</li>
+            <li>$y(t) = y_0 + v_{y0} \cdot t - \frac{1}{2}g \cdot t^2$</li>
           </ul>
-        </div>
+        </li>
+      </ul>
 
-        <div class="formula-box">
-          <h3>Key Equations</h3>
-          <div class="formula">
-            <span class="formula-label">Horizontal Position:</span>
-            <span class="formula-eq">x = x₀ + v₀·cos(θ)·t</span>
-          </div>
-          <div class="formula">
-            <span class="formula-label">Vertical Position:</span>
-            <span class="formula-eq">y = y₀ + v₀·sin(θ)·t - ½·g·t²</span>
-          </div>
-          <div class="formula">
-            <span class="formula-label">Range:</span>
-            <span class="formula-eq">R = (v₀²·sin(2θ))/g</span>
-          </div>
-          <div class="formula">
-            <span class="formula-label">Maximum Height:</span>
-            <span class="formula-eq">H = (v₀²·sin²(θ))/(2g)</span>
-          </div>
-        </div>
+      <div class="key-idea">
+        <p><strong>The Golden Link:</strong> The one thing that connects both motions is <strong>time ($t$)</strong>. The projectile stops moving horizontally at the same instant it stops moving vertically (when it hits the ground).</p>
       </div>
     </section>
 
-    <!-- Interactive Visualization Section -->
-    <section class="tutorial-section viz-section">
-      <div class="section-header">
-        <h2><i class="fas fa-eye"></i> Interactive Visualization</h2>
-        <p>Experiment with different parameters to see how they affect projectile motion</p>
-      </div>
+    <!-- Section 4: Visualization -->
+    <section class="tutorial-section" id="section-4" data-section="4">
+      <h2><i class="fas fa-eye"></i> Visualization: See It in Action!</h2>
 
-      <div class="viz-container">
-        <div class="viz-display">
-          <div id="visualization"></div>
+      <p>Let's see how these two components work together. The visualization below shows a projectile's path. Notice the motion behavior:</p>
+      <ul>
+        <li>The <strong>horizontal position</strong> changes at a constant rate.</li>
+        <li>The <strong>vertical position</strong> moves up, slows down, stops at the peak, and then accelerates down.</li>
+      </ul>
 
-          <!-- Minimal Speed & Navigation Controls -->
-          <div class="speed-nav-controls" id="speedNavControls">
-            <select id="speedSelect" class="speed-dropdown" title="Animation Speed">
-              <option value="0.25">0.25x</option>
-              <option value="0.5">0.5x</option>
-              <option value="1" selected>1x</option>
-              <option value="1.5">1.5x</option>
-              <option value="2">2x</option>
-            </select>
-            <button class="nav-btn" id="prevBtn" title="Previous Frame" style="display: none;">
-              <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="nav-btn" id="nextBtn" title="Next Frame" style="display: none;">
-              <i class="fas fa-chevron-right"></i>
-            </button>
-          </div>
-
-          <!-- Live Values Display -->
-          <div class="live-values" id="liveValues" style="display: none;">
-            <div class="live-value-item">
-              <span class="live-label">X:</span>
-              <span class="live-value" id="liveX">0.00</span>
-              <span class="live-unit">m</span>
-            </div>
-            <div class="live-value-item">
-              <span class="live-label">Y:</span>
-              <span class="live-value" id="liveY">0.00</span>
-              <span class="live-unit">m</span>
-            </div>
-            <div class="live-value-item velocity" id="liveVelocity" style="display: none;">
-              <span class="live-label">V:</span>
-              <span class="live-value" id="liveV">0.00</span>
-              <span class="live-unit">m/s</span>
+      <div class="viz-wrapper">
+        <div class="viz-display-section">
+          <div class="viz-canvas" id="staticViz">
+            <div id="staticVizPlaceholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af; font-size: 14px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+              Click "Run Simulation" to visualize projectile motion
             </div>
           </div>
 
-          <!-- Animation Controls -->
-          <div class="animation-controls" id="animationControls" style="display: none;">
-            <button class="anim-btn" id="playPauseBtn" title="Play/Pause">
-              <i class="fas fa-pause"></i>
-            </button>
-            <button class="anim-btn" id="replayBtn" title="Replay">
-              <i class="fas fa-redo"></i>
-            </button>
-          </div>
-        </div>
+          <div class="viz-controls">
+            <div class="control-group">
+              <label>Initial Velocity ($v_0$)</label>
+              <input type="number" id="static-v0" value="20" min="5" max="50" step="1">
+            </div>
+            <div class="control-group">
+              <label>Launch Angle ($\theta$)</label>
+              <input type="number" id="static-angle" value="45" min="0" max="90" step="5">
+            </div>
+            <div class="control-group">
+              <label>Initial Height ($y_0$)</label>
+              <input type="number" id="static-y0" value="0" min="0" max="20" step="1">
+            </div>
 
-        <div class="viz-controls">
-          <h3>Controls</h3>
-
-          <div class="control-group">
-            <label>
-              <span>Initial Velocity (v₀)</span>
-              <input type="number" id="v0Input" value="20" min="1" max="50" step="1">
-              <span class="unit">m/s</span>
-            </label>
-          </div>
-
-          <div class="control-group">
-            <label>
-              <span>Launch Angle (θ)</span>
-              <input type="number" id="thetaInput" value="45" min="0" max="90" step="5">
-              <span class="unit">degrees</span>
-            </label>
-          </div>
-
-          <div class="control-group">
-            <label>
-              <span>Initial Height (y₀)</span>
-              <input type="number" id="y0Input" value="0" min="0" max="20" step="1">
-              <span class="unit">m</span>
-            </label>
-          </div>
-
-          <div class="control-buttons">
-            <button id="launchBtn" class="btn-primary">
-              <i class="fas fa-play"></i> Launch
-            </button>
-            <button id="resetBtn" class="btn-secondary">
-              <i class="fas fa-redo"></i> Reset
-            </button>
-          </div>
-
-          <div class="viz-info">
-            <h4>Calculated Values</h4>
-            <div class="info-grid">
-              <div class="info-item">
-                <span class="info-label">Range:</span>
-                <span class="info-value" id="rangeValue">--</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Max Height:</span>
-                <span class="info-value" id="heightValue">--</span>
-              </div>
-              <div class="info-item">
-                <span class="info-label">Time of Flight:</span>
-                <span class="info-value" id="timeValue">--</span>
-              </div>
+            <div class="viz-actions">
+              <button class="btn-run" id="btnRunStatic">
+                <i class="fas fa-play"></i>
+                Run Simulation
+              </button>
+              <button class="btn-reset" id="btnResetStatic">
+                <i class="fas fa-redo"></i>
+                Reset
+              </button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Static Examples Section -->
-    <section class="tutorial-section examples-section">
-      <div class="section-content">
-        <h2><i class="fas fa-lightbulb"></i> Example Problems</h2>
+    <!-- Section 5: Key Formulas -->
+    <section class="tutorial-section" id="section-5" data-section="5">
+      <h2><i class="fas fa-calculator"></i> The Key Formulas</h2>
 
-        <div class="example-card">
-          <div class="example-header">
-            <h3>Example 1: Basketball Shot</h3>
-            <span class="difficulty-badge beginner">Beginner</span>
-          </div>
-          <div class="example-body">
-            <p><strong>Problem:</strong> A basketball player shoots a ball at 8 m/s at an angle of 60° from a height of 2m. How far does the ball travel horizontally before hitting the ground?</p>
+      <p>Here are the essential equations you'll need. Don't just memorize them; understand where they come from!</p>
 
-            <details>
-              <summary>Show Solution</summary>
-              <div class="solution">
-                <p><strong>Given:</strong></p>
-                <ul>
-                  <li>v₀ = 8 m/s</li>
-                  <li>θ = 60°</li>
-                  <li>y₀ = 2 m</li>
-                  <li>g = 9.8 m/s²</li>
-                </ul>
+      <div class="formula-box">
+        <h3>Initial Velocity Components</h3>
+        <div class="formula-item">
+          Horizontal: $v_x = v_0 \cdot \cos(\theta)$
+        </div>
+        <div class="formula-item">
+          Vertical: $v_{y0} = v_0 \cdot \sin(\theta)$
+        </div>
+      </div>
 
-                <p><strong>Step 1:</strong> Find vertical component: v_y = 8·sin(60°) = 6.93 m/s</p>
-                <p><strong>Step 2:</strong> Find horizontal component: v_x = 8·cos(60°) = 4 m/s</p>
-                <p><strong>Step 3:</strong> Find time to hit ground using: y = y₀ + v_y·t - ½·g·t²</p>
-                <p>0 = 2 + 6.93t - 4.9t² → t ≈ 1.64 s</p>
-                <p><strong>Step 4:</strong> Find range: R = v_x·t = 4 × 1.64 = 6.56 m</p>
+      <div class="formula-box">
+        <h3>Position at any time $t$</h3>
+        <div class="formula-item">
+          Horizontal: $x(t) = v_x \cdot t$
+        </div>
+        <div class="formula-item">
+          Vertical: $y(t) = y_0 + v_{y0} \cdot t - \frac{1}{2}g \cdot t^2$
+        </div>
+      </div>
 
-                <p class="answer"><strong>Answer:</strong> The ball travels approximately 6.56 meters horizontally.</p>
-              </div>
-            </details>
+      <div class="formula-box">
+        <h3>Special Cases (when launched from the ground, $y_0 = 0$)</h3>
+        <div class="formula-item">
+          Maximum Height: $H = \frac{v_0^2 \cdot \sin^2(\theta)}{2g}$
+        </div>
+        <div class="formula-item">
+          Time of Flight: $T = \frac{2 \cdot v_0 \cdot \sin(\theta)}{g}$
+        </div>
+        <div class="formula-item">
+          Range: $R = \frac{v_0^2 \cdot \sin(2\theta)}{g}$
+        </div>
+        <p style="margin-top: 16px; font-size: 14px; opacity: 0.9;">
+          <strong>Cool Fact:</strong> The maximum range is achieved when $\sin(2\theta)$ is maximum (i.e., 1), which happens when $2\theta = 90°$, or $\theta = 45°$.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 6: Example - Cannonball -->
+    <section class="tutorial-section" id="section-6" data-section="6">
+      <h2><i class="fas fa-rocket"></i> Example 1: The Classic Cannonball</h2>
+
+      <p><strong>Problem:</strong> A cannon fires a ball with an initial velocity of 100 m/s at an angle of 30° above the horizontal from ground level. Find its time of flight, maximum height, and range.</p>
+
+      <h3>Solution:</h3>
+      <ol>
+        <li><strong>Break down the initial velocity:</strong>
+          <ul>
+            <li>$v_x = 100 \cdot \cos(30°) = 100 \cdot 0.866 = 86.6 \text{ m/s}$</li>
+            <li>$v_{y0} = 100 \cdot \sin(30°) = 100 \cdot 0.5 = 50 \text{ m/s}$</li>
+          </ul>
+        </li>
+        <li><strong>Calculate Time of Flight:</strong>
+          <ul>
+            <li>$T = \frac{2 \cdot v_{y0}}{g} = \frac{2 \cdot 50}{9.81} = 10.2 \text{ s}$</li>
+          </ul>
+        </li>
+        <li><strong>Calculate Maximum Height:</strong>
+          <ul>
+            <li>$H = \frac{v_{y0}^2}{2g} = \frac{50^2}{2 \cdot 9.81} = \frac{2500}{19.62} = 127.4 \text{ m}$</li>
+          </ul>
+        </li>
+        <li><strong>Calculate Range:</strong>
+          <ul>
+            <li>$R = v_x \cdot T = 86.6 \cdot 10.2 = 883.3 \text{ m}$</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="viz-wrapper">
+        <div class="viz-canvas" id="example1Viz">
+          <div id="example1VizPlaceholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af; font-size: 14px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+            Click "Run Example" to visualize this cannonball problem
           </div>
         </div>
 
-        <div class="example-card">
-          <div class="example-header">
-            <h3>Example 2: Maximum Range</h3>
-            <span class="difficulty-badge intermediate">Intermediate</span>
-          </div>
-          <div class="example-body">
-            <p><strong>Problem:</strong> At what angle should you launch a projectile to achieve maximum range? Prove your answer mathematically.</p>
-
-            <details>
-              <summary>Show Solution</summary>
-              <div class="solution">
-                <p><strong>Given:</strong> Range formula R = (v₀²·sin(2θ))/g</p>
-
-                <p><strong>Step 1:</strong> To maximize R, we need to maximize sin(2θ)</p>
-                <p><strong>Step 2:</strong> The maximum value of sin(x) is 1, which occurs when x = 90°</p>
-                <p><strong>Step 3:</strong> Therefore, 2θ = 90° → θ = 45°</p>
-
-                <p class="answer"><strong>Answer:</strong> A launch angle of 45° gives maximum range (assuming no air resistance and level ground).</p>
-              </div>
-            </details>
-          </div>
+        <div class="viz-actions" style="justify-content: center;">
+          <button class="btn-run" id="btnRunExample1">
+            <i class="fas fa-play"></i>
+            Run Example
+          </button>
+          <button class="btn-reset" id="btnResetExample1">
+            <i class="fas fa-redo"></i>
+            Reset
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- Summary Section -->
-    <section class="tutorial-section summary-section">
-      <div class="section-content">
-        <h2><i class="fas fa-check-circle"></i> Summary</h2>
+    <!-- Section 7: Quick Test -->
+    <section class="tutorial-section" id="section-7" data-section="7">
+      <h2><i class="fas fa-question-circle"></i> Quick Test: Check Your Understanding!</h2>
 
-        <div class="summary-grid">
-          <div class="summary-card">
-            <h3>What We Learned</h3>
-            <ul>
-              <li>Projectile motion follows a parabolic path</li>
-              <li>Horizontal and vertical motions are independent</li>
-              <li>45° angle gives maximum range</li>
-              <li>Time of flight depends only on vertical motion</li>
-            </ul>
-          </div>
+      <p>Answer the following questions to test your knowledge.</p>
 
-          <div class="summary-card">
-            <h3>Key Takeaways</h3>
-            <ul>
-              <li>Break velocity into components (v_x and v_y)</li>
-              <li>Use kinematic equations for each direction</li>
-              <li>Gravity only affects vertical motion</li>
-              <li>Horizontal velocity remains constant</li>
-            </ul>
-          </div>
+      <!-- Question 1 -->
+      <div class="quiz-question" data-question="1">
+        <h4>Question 1:</h4>
+        <p>A cannonball is fired. At the very top of its trajectory, what is its vertical velocity ($v_y$)?</p>
+        <input type="text" class="quiz-input" id="q1-input" placeholder="Enter your answer (e.g., 0 m/s)">
+        <button class="btn-check" onclick="checkQuizQuestion1()">Check Answer</button>
+        <div class="quiz-feedback" id="q1-feedback">
+          <p id="q1-feedback-text"></p>
+        </div>
+      </div>
 
-          <div class="summary-card">
-            <h3>Real-World Applications</h3>
-            <ul>
-              <li>Sports (basketball, football, golf)</li>
-              <li>Artillery and ballistics</li>
-              <li>Space vehicle trajectories</li>
-              <li>Water fountains and sprinkler systems</li>
-            </ul>
-          </div>
+      <!-- Question 2 -->
+      <div class="quiz-question" data-question="2">
+        <h4>Question 2:</h4>
+        <p>If you ignore air resistance, what happens to the horizontal velocity of a projectile throughout its flight?</p>
+        <div class="quiz-options">
+          <label class="quiz-option">
+            <input type="radio" name="q2" value="increases">
+            <span>Increases</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q2" value="decreases">
+            <span>Decreases</span>
+          </label>
+          <label class="quiz-option">
+            <input type="radio" name="q2" value="stays">
+            <span>Stays the same</span>
+          </label>
+        </div>
+        <button class="btn-check" onclick="checkQuizQuestion2()">Check Answer</button>
+        <div class="quiz-feedback" id="q2-feedback">
+          <p id="q2-feedback-text"></p>
+        </div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="quiz-question" data-question="3">
+        <h4>Question 3:</h4>
+        <p>Which launch angle gives the maximum possible range for a projectile?</p>
+        <input type="number" class="quiz-input" id="q3-input" placeholder="Enter angle in degrees">
+        <button class="btn-check" onclick="checkQuizQuestion3()">Check Answer</button>
+        <div class="quiz-feedback" id="q3-feedback">
+          <p id="q3-feedback-text"></p>
         </div>
       </div>
     </section>
 
-    <!-- Interactive Chat Section (at bottom) -->
-    <section class="tutorial-section chat-section">
-      <div class="section-header">
-        <h2><i class="fas fa-comments"></i> Ask AI Tutor</h2>
-        <p>Have questions? Ask our AI tutor for personalized help and custom visualizations</p>
+    <!-- Section 8: Descriptive Test -->
+    <section class="tutorial-section" id="section-8" data-section="8">
+      <h2><i class="fas fa-pen"></i> Descriptive Test: Apply Your Concepts</h2>
+
+      <p>Now, let's tackle some conceptual questions. Your answers will be evaluated by our AI tutor to provide you with personalized feedback.</p>
+
+      <!-- Descriptive Question 1 -->
+      <div class="descriptive-question" data-desc-question="1">
+        <h4>Question 1:</h4>
+        <p>You fire two projectiles from ground level with the same initial speed. One is fired at 20° and the other at 70°. Ignoring air resistance, which one will have the greater range? Explain your reasoning.</p>
+        <textarea class="descriptive-textarea" id="desc-q1" placeholder="Type your detailed answer here..."></textarea>
+        <button class="btn-submit" onclick="evaluateDescriptiveQuestion1()">
+          <i class="fas fa-paper-plane"></i> Submit for Evaluation
+        </button>
+        <div class="ai-feedback" id="desc-q1-feedback">
+          <div class="ai-score" id="desc-q1-score"></div>
+          <p id="desc-q1-feedback-text"></p>
+        </div>
       </div>
 
-      <div class="chat-viz-container">
-        <!-- Sidebar Chat -->
-        <div class="chat-sidebar">
-          <div class="chat-messages" id="chatMessages">
-            <div class="message assistant">
-              <p>Hello! I'm your AI physics tutor. Ask me anything about projectile motion, or request a custom visualization!</p>
-              <p class="hint">Try: "Show me a projectile launched at 30 m/s at 60 degrees"</p>
-            </div>
-          </div>
-
-          <div class="typing-indicator" id="typingIndicator">
-            <span></span><span></span><span></span>
-          </div>
-
-          <div class="chat-input-container">
-            <textarea id="chatInput" placeholder="Ask a question or request a visualization..." rows="2"></textarea>
-            <button id="sendBtn" class="btn-send">
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </div>
+      <!-- Descriptive Question 2 -->
+      <div class="descriptive-question" data-desc-question="2">
+        <h4>Question 2:</h4>
+        <p>Imagine you throw a ball horizontally from a tall cliff. At the exact same moment, your friend drops an identical ball from the same height. Which ball hits the ground first? Explain why.</p>
+        <textarea class="descriptive-textarea" id="desc-q2" placeholder="Type your detailed answer here..."></textarea>
+        <button class="btn-submit" onclick="evaluateDescriptiveQuestion2()">
+          <i class="fas fa-paper-plane"></i> Submit for Evaluation
+        </button>
+        <div class="ai-feedback" id="desc-q2-feedback">
+          <div class="ai-score" id="desc-q2-score"></div>
+          <p id="desc-q2-feedback-text"></p>
         </div>
+      </div>
+    </section>
 
-        <!-- Visualization Panel for Chat -->
-        <div class="chat-viz-panel">
-          <div id="chatVisualization"></div>
-          <div class="viz-placeholder">
-            <i class="fas fa-chart-area"></i>
-            <p>Visualizations from your questions will appear here</p>
-          </div>
+    <!-- Section 9: Chat Playground -->
+    <section class="tutorial-section" id="section-9" data-section="9">
+      <h2><i class="fas fa-comments"></i> Playground: The Chat-Controlled Visualizer</h2>
 
-          <!-- Minimal Speed & Navigation Controls for Chat -->
-          <div class="speed-nav-controls" id="chatSpeedNavControls">
-            <select id="chatSpeedSelect" class="speed-dropdown" title="Animation Speed">
-              <option value="0.25">0.25x</option>
-              <option value="0.5">0.5x</option>
-              <option value="1" selected>1x</option>
-              <option value="1.5">1.5x</option>
-              <option value="2">2x</option>
-            </select>
-            <button class="nav-btn" id="chatPrevBtn" title="Previous Frame" style="display: none;">
-              <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="nav-btn" id="chatNextBtn" title="Next Frame" style="display: none;">
-              <i class="fas fa-chevron-right"></i>
-            </button>
-          </div>
+      <p>You've learned the theory, now it's time to experiment! Use plain English to command the visualizer. Ask questions, change parameters, and see what happens.</p>
 
-          <!-- Live Values Display for Chat -->
-          <div class="live-values" id="chatLiveValues" style="display: none;">
-            <div class="live-value-item">
-              <span class="live-label">X:</span>
-              <span class="live-value" id="chatLiveX">0.00</span>
-              <span class="live-unit">m</span>
+      <div class="chat-container">
+        <div class="chat-grid">
+          <!-- Chat Panel -->
+          <div class="chat-panel">
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-message assistant">
+                <p>Hello! I'm your AI physics tutor. Ask me anything about projectile motion, or request a custom visualization!</p>
+                <p style="margin-top: 8px; font-size: 12px; opacity: 0.7; font-style: italic;">Try: "Show me a projectile launched at 30 m/s at 60 degrees"</p>
+              </div>
             </div>
-            <div class="live-value-item">
-              <span class="live-label">Y:</span>
-              <span class="live-value" id="chatLiveY">0.00</span>
-              <span class="live-unit">m</span>
-            </div>
-            <div class="live-value-item velocity" id="chatLiveVelocity" style="display: none;">
-              <span class="live-label">V:</span>
-              <span class="live-value" id="chatLiveV">0.00</span>
-              <span class="live-unit">m/s</span>
+
+            <div class="chat-input-area">
+              <textarea id="chatInput" class="chat-input" placeholder="Ask a question or request a visualization..." rows="2"></textarea>
+              <button id="sendBtn" class="chat-send-btn">
+                <i class="fas fa-paper-plane"></i>
+              </button>
             </div>
           </div>
 
-          <!-- Animation Controls for Chat Viz -->
-          <div class="animation-controls" id="chatAnimationControls" style="display: none;">
-            <button class="anim-btn" id="chatPlayPauseBtn" title="Play/Pause">
-              <i class="fas fa-pause"></i>
-            </button>
-            <button class="anim-btn" id="chatReplayBtn" title="Replay">
-              <i class="fas fa-redo"></i>
-            </button>
+          <!-- Visualization Panel -->
+          <div class="chat-viz-panel" id="chatVisualization">
+            <div class="chat-viz-placeholder">
+              <i class="fas fa-chart-area" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+              <p>Visualizations from your questions will appear here</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="tutorial-footer">
-    <div class="footer-content">
-      <div class="footer-nav">
-        <a href="../2d-graphs/index.html" class="prev-tutorial">
-          <i class="fas fa-chevron-left"></i> Previous: 2D Graphs
-        </a>
-        <a href="../../index.html" class="back-home">
-          Back to Home
-        </a>
-        <a href="#" class="next-tutorial disabled">
-          Next Tutorial <i class="fas fa-chevron-right"></i>
-        </a>
-      </div>
-      <p>&copy; 2025 Physics Learning Platform</p>
-    </div>
-  </footer>
+  <!-- Floating TOC Button -->
+  <button class="floating-toc" id="btnTOC" onclick="toggleTOC()">
+    <i class="fas fa-list"></i>
+  </button>
 
-  <script type="module" src="./main.js"></script>
+  <!-- TOC Panel -->
+  <div class="toc-panel" id="tocPanel">
+    <h3>Table of Contents</h3>
+    <ul class="toc-list">
+      <li><a href="#section-1" onclick="scrollToSection(1)">1. What is Projectile Motion?</a></li>
+      <li><a href="#section-2" onclick="scrollToSection(2)">2. Definition & Assumptions</a></li>
+      <li><a href="#section-3" onclick="scrollToSection(3)">3. The Two Components</a></li>
+      <li><a href="#section-4" onclick="scrollToSection(4)">4. Visualization</a></li>
+      <li><a href="#section-5" onclick="scrollToSection(5)">5. Key Formulas</a></li>
+      <li><a href="#section-6" onclick="scrollToSection(6)">6. Example: Cannonball</a></li>
+      <li><a href="#section-7" onclick="scrollToSection(7)">7. Quick Test</a></li>
+      <li><a href="#section-8" onclick="scrollToSection(8)">8. Descriptive Test</a></li>
+      <li><a href="#section-9" onclick="scrollToSection(9)">9. Chat Playground</a></li>
+    </ul>
+  </div>
+
+  <!-- Floating AI Button -->
+  <button class="floating-ai" id="btnAI" onclick="scrollToChat()">
+    <i class="fas fa-robot"></i>
+  </button>
+
+  <script type="module" src="./tutorial.js"></script>
 </body>
 </html>
