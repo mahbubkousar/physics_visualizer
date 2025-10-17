@@ -141,8 +141,20 @@
       color: #1a1a1a;
       margin-bottom: 40px;
       letter-spacing: -0.7px;
+      padding-left: 24px;
       padding-bottom: 16px;
-      border-bottom: 1px solid #e8eaed;
+      border-left: 4px solid #2c3e50;
+      position: relative;
+    }
+
+    .tutorial-section h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 80px;
+      height: 2px;
+      background: linear-gradient(90deg, #2c3e50, transparent);
     }
 
     .section-header {
@@ -153,27 +165,19 @@
       font-size: 28px;
       color: #333;
       margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: none;
-      padding-bottom: 0;
+      border-left: 4px solid #667eea;
+      padding-left: 24px;
     }
 
-    .section-header h2 i {
-      color: #667eea;
+    .section-header h2::before {
+      background: linear-gradient(90deg, #667eea, transparent);
     }
 
     .section-header p {
       color: #666;
       font-size: 16px;
       margin-bottom: 0;
-    }
-
-    .tutorial-section h2 i {
-      font-size: 28px;
-      color: #2c3e50;
-      margin-right: 12px;
+      padding-left: 28px;
     }
 
     .tutorial-section h3 {
@@ -412,13 +416,61 @@
       background: #d1d5db;
     }
 
+    /* Quiz Sections - Highlighted with subtle background */
+    #section-7 {
+      background:
+        radial-gradient(circle at 95% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 5% 90%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(99, 102, 241, 0.02) 100%);
+      padding: 48px 40px;
+      margin: 64px -40px 96px -40px;
+      border-radius: 16px;
+      position: relative;
+    }
+
+    #section-7::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #6366f1);
+      border-radius: 16px 16px 0 0;
+    }
+
+    #section-8 {
+      background:
+        radial-gradient(circle at 5% 15%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 95% 85%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(168, 85, 247, 0.02) 100%);
+      padding: 48px 40px;
+      margin: 64px -40px 96px -40px;
+      border-radius: 16px;
+      position: relative;
+    }
+
+    #section-8::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #8b5cf6, #a855f7);
+      border-radius: 16px 16px 0 0;
+    }
+
     /* Quiz Section */
     .quiz-question {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
       padding: 32px;
       margin: 40px 0;
-      border: 1px solid #e8eaed;
+      border: 1px solid rgba(59, 130, 246, 0.2);
       border-left: 3px solid #3b82f6;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.05);
     }
 
     .quiz-question h4 {
@@ -502,11 +554,14 @@
 
     /* Descriptive Test */
     .descriptive-question {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
       padding: 32px;
       margin: 40px 0;
-      border: 1px solid #e8eaed;
+      border: 1px solid rgba(139, 92, 246, 0.2);
       border-left: 3px solid #8b5cf6;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.05);
     }
 
     .descriptive-textarea {
@@ -1068,6 +1123,95 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Footer */
+    .tutorial-footer {
+      background: #ffffff;
+      border-top: 1px solid #e8eaed;
+      padding: 48px 0 32px;
+      margin-top: 120px;
+    }
+
+    .footer-content {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 48px;
+      margin-bottom: 32px;
+    }
+
+    .footer-brand h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+      letter-spacing: -0.3px;
+    }
+
+    .footer-brand p {
+      color: #6b7280;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .footer-brand a {
+      color: #2c3e50;
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .footer-brand a:hover {
+      opacity: 0.7;
+    }
+
+    .footer-ai-info {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(99, 102, 241, 0.05));
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(59, 130, 246, 0.15);
+    }
+
+    .footer-ai-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-ai-info p {
+      color: #475569;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .footer-ai-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .footer-bottom {
+      padding-top: 24px;
+      border-top: 1px solid #e8eaed;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1104,7 +1248,7 @@
 
     <!-- Section 1: What is Projectile Motion? -->
     <section class="tutorial-section" id="section-1" data-section="1">
-      <h2><i class="fas fa-lightbulb"></i> What is Projectile Motion?</h2>
+      <h2>What is Projectile Motion?</h2>
 
       <p>Imagine you're in a car moving at a steady 50 km/h and you drop a ball out the window. From your perspective inside the car, the ball just drops straight down. But to someone standing on the sidewalk, the ball follows a curved path forward and down.</p>
 
@@ -1121,7 +1265,7 @@
 
     <!-- Section 2: Definition & Assumptions -->
     <section class="tutorial-section" id="section-2" data-section="2">
-      <h2><i class="fas fa-book"></i> Formal Definition & Key Assumptions</h2>
+      <h2>Formal Definition & Key Assumptions</h2>
 
       <div class="definition-box">
         <strong>Definition:</strong> A <strong>projectile</strong> is any object that is thrown, shot, or launched into the air and then moves only under the influence of gravity. The path it follows is called its <strong>trajectory</strong>.
@@ -1137,7 +1281,7 @@
 
     <!-- Section 3: The Two Components -->
     <section class="tutorial-section" id="section-3" data-section="3">
-      <h2><i class="fas fa-project-diagram"></i> The Two Components: A Deeper Look</h2>
+      <h2>The Two Components: A Deeper Look</h2>
 
       <p>Let's break down the motion of an object launched with an initial velocity $v_0$ at an angle $\theta$ from the ground.</p>
 
@@ -1169,7 +1313,7 @@
 
     <!-- Section 4: Visualization -->
     <section class="tutorial-section" id="section-4" data-section="4">
-      <h2><i class="fas fa-eye"></i> Visualization: See It in Action!</h2>
+      <h2>Visualization: See It in Action!</h2>
 
       <p>Let's see how these two components work together. The visualization below shows a projectile's path. Notice the motion behavior:</p>
       <ul>
@@ -1260,7 +1404,7 @@
 
     <!-- Section 5: Key Formulas -->
     <section class="tutorial-section" id="section-5" data-section="5">
-      <h2><i class="fas fa-calculator"></i> The Key Formulas</h2>
+      <h2>The Key Formulas</h2>
 
       <p>Here are the essential equations you'll need. Don't just memorize them; understand where they come from!</p>
 
@@ -1303,7 +1447,7 @@
 
     <!-- Section 6: Example - Cannonball -->
     <section class="tutorial-section" id="section-6" data-section="6">
-      <h2><i class="fas fa-rocket"></i> Example 1: The Classic Cannonball</h2>
+      <h2>Example 1: The Classic Cannonball</h2>
 
       <p><strong>Problem:</strong> A cannon fires a ball with an initial velocity of 100 m/s at an angle of 30° above the horizontal from ground level. Find its time of flight, maximum height, and range.</p>
 
@@ -1396,7 +1540,7 @@
 
     <!-- Section 7: Quick Test -->
     <section class="tutorial-section" id="section-7" data-section="7">
-      <h2><i class="fas fa-question-circle"></i> Quick Test: Check Your Understanding!</h2>
+      <h2>Quick Test: Check Your Understanding!</h2>
 
       <p>Answer the following questions to test your knowledge.</p>
 
@@ -1449,9 +1593,9 @@
 
     <!-- Section 8: Descriptive Test -->
     <section class="tutorial-section" id="section-8" data-section="8">
-      <h2><i class="fas fa-pen"></i> Descriptive Test: Apply Your Concepts</h2>
+      <h2>Descriptive Test: Apply Your Concepts</h2>
 
-      <p>Now, let's tackle some conceptual questions. Your answers will be evaluated by our AI tutor to provide you with personalized feedback.</p>
+      <p>Now, let's tackle some conceptual questions. Your answers will be evaluated by <strong>Asymptote AI</strong> to provide you with personalized feedback.</p>
 
       <!-- Descriptive Question 1 -->
       <div class="descriptive-question" data-desc-question="1">
@@ -1485,8 +1629,8 @@
     <!-- Section 9: Chat Playground -->
     <section class="tutorial-section chat-section" id="section-9" data-section="9">
       <div class="section-header">
-        <h2><i class="fas fa-comments"></i> Ask AI Tutor</h2>
-        <p>Have questions? Ask our AI tutor for personalized help and custom visualizations</p>
+        <h2>Ask Asymptote AI</h2>
+        <p>Have questions? Ask Asymptote AI for personalized help and custom visualizations</p>
       </div>
 
       <div class="chat-viz-container">
@@ -1494,7 +1638,7 @@
         <div class="chat-sidebar">
           <div class="chat-messages" id="chatMessages">
             <div class="message assistant">
-              <p>Hello! I'm your AI physics tutor. Ask me anything about projectile motion, or request a custom visualization!</p>
+              <p>Hello! I'm Asymptote AI, your physics tutor. Ask me anything about projectile motion, or request a custom visualization!</p>
               <p class="hint">Try: "Show me a projectile launched at 30 m/s at 60 degrees"</p>
             </div>
           </div>
@@ -1592,6 +1736,27 @@
   <button class="floating-ai" id="btnAI" onclick="scrollToChat()">
     <i class="fas fa-robot"></i>
   </button>
+
+  <!-- Footer -->
+  <footer class="tutorial-footer">
+    <div class="footer-content">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>Asymptote Labs</h3>
+          <p>Building the future of interactive physics education through visualization and AI-powered learning.</p>
+          <p>Visit us at <a href="https://asymptotelabs.github.io" target="_blank" rel="noopener">asymptotelabs.github.io</a></p>
+        </div>
+        <div class="footer-ai-info">
+          <h4>Asymptote AI</h4>
+          <p>Powered by advanced AI technology to provide personalized tutoring and intelligent feedback.</p>
+          <p><strong>Baseline Model:</strong> Google Gemini 2.5 Flash</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2025 Asymptote Labs. All rights reserved.
+      </div>
+    </div>
+  </footer>
 
   <script type="module" src="./tutorial.js"></script>
 </body>

@@ -15,7 +15,7 @@ import { config } from '../../config.js';
 // ===================================
 
 let currentScore = 0;
-let maxScore = 100;
+let maxScore = 50; // 3 quiz questions (10 each) + 2 descriptive questions (10 each)
 let sectionProgress = {};
 let totalSections = 9;
 
