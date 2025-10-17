@@ -106,7 +106,7 @@ export class GeminiChat {
             temperature: 0.7,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 2048,
+            maxOutputTokens: 4096,
           }
         })
       });
@@ -174,7 +174,33 @@ export class GeminiChat {
 
     try {
       const data = await this.makeRequest();
-      const assistantMessage = data.candidates[0].content.parts[0].text;
+      console.log('GeminiAPI: Full response data:', JSON.stringify(data, null, 2));
+
+      // Check if response has expected structure
+      if (!data.candidates || !data.candidates[0]) {
+        console.error('GeminiAPI: Unexpected response structure:', data);
+        throw new Error('Invalid API response: No candidates found. Response may have been blocked or filtered.');
+      }
+
+      const candidate = data.candidates[0];
+
+      // Check finish reason
+      if (candidate.finishReason === 'MAX_TOKENS') {
+        console.warn('GeminiAPI: Response was cut off due to MAX_TOKENS');
+      }
+
+      if (!candidate.content || !candidate.content.parts || !candidate.content.parts[0]) {
+        console.error('GeminiAPI: Missing content in response:', candidate);
+
+        // Check if there's a safety or other blocking reason
+        if (candidate.finishReason === 'SAFETY' || candidate.finishReason === 'RECITATION') {
+          throw new Error(`Response blocked due to: ${candidate.finishReason}`);
+        }
+
+        throw new Error(`Invalid API response: No content in candidate. Finish reason: ${candidate.finishReason || 'unknown'}`);
+      }
+
+      const assistantMessage = candidate.content.parts[0].text;
 
       // Add assistant response to history
       this.addToHistory('model', assistantMessage);

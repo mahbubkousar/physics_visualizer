@@ -6,6 +6,7 @@ import { ToolsManager } from '../../src/core/tools-manager.js';
 import { Projectile } from '../../src/tools/projectile.js';
 import { Graph2D } from '../../src/tools/2dgraph.js';
 import { ChatController } from '../../src/core/chat-controller.js';
+import { GeminiChat } from '../../src/core/gemini-api.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
 import { config } from '../../config.js';
 
@@ -199,128 +200,317 @@ function checkQuizQuestion3() {
 window.checkQuizQuestion3 = checkQuizQuestion3;
 
 // ===================================
-// Descriptive Question Evaluation (Mock AI)
+// Descriptive Question Evaluation using GEMINI AI
 // ===================================
 
-// Note: In a real implementation, this would call your backend API with Gemini
-// For now, we'll provide intelligent mock responses based on keyword detection
+// Function to format feedback text to HTML with proper formatting
+function formatFeedbackText(text) {
+  let html = text;
 
-function evaluateDescriptiveQuestion1() {
+  // Convert **bold** to <strong>
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // Convert *italic* to <em>
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Convert bullet points (- item or * item) to <ul><li>
+  html = html.replace(/^[\*\-]\s+(.+)$/gm, '<li>$1</li>');
+  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+
+  // Convert numbered lists (1. item, 2. item)
+  html = html.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+  // Wrap consecutive <li> in <ol> if they came from numbered lists
+  html = html.replace(/(<li>.*?<\/li>\n?)+/g, (match) => {
+    // Check if this came from a numbered list (has digits before)
+    if (/^\d+\.\s+/m.test(text.substring(text.indexOf(match.replace(/<[^>]+>/g, ''))))) {
+      return '<ol>' + match + '</ol>';
+    }
+    return match;
+  });
+
+  // Convert paragraphs (double newlines) to <p>
+  const paragraphs = html.split(/\n\n+/);
+  html = paragraphs.map(p => {
+    p = p.trim();
+    // Don't wrap if already has block-level tags
+    if (p.startsWith('<ul>') || p.startsWith('<ol>') || p.startsWith('<h')) {
+      return p;
+    }
+    // Replace single newlines with <br>
+    p = p.replace(/\n/g, '<br>');
+    return `<p>${p}</p>`;
+  }).join('');
+
+  // Handle math formulas - convert LaTeX-style to MathJax
+  // Inline math: $formula$ or \(formula\)
+  html = html.replace(/\$([^\$]+)\$/g, '\\($1\\)');
+
+  // Display math: $$formula$$ or \[formula\]
+  html = html.replace(/\$\$([^\$]+)\$\$/g, '\\[$1\\]');
+
+  return html;
+}
+
+// Create evaluation prompts for each question
+const QUESTION_CONTEXTS = {
+  question1: {
+    question: "You fire two projectiles from ground level with the same initial speed. One is fired at 20° and the other at 70°. Ignoring air resistance, which one will have the greater range? Explain your reasoning.",
+    correctAnswer: "Both projectiles will have the SAME range. This is because 20° and 70° are complementary angles (they add up to 90°). According to the range formula R = (v₀² × sin(2θ))/g, complementary angles produce the same value of sin(2θ). Specifically, sin(2×20°) = sin(40°) and sin(2×70°) = sin(140°), and sin(40°) = sin(140°) because sin(180° - x) = sin(x).",
+    keyPoints: [
+      "Both have the same range",
+      "20° and 70° are complementary angles (sum to 90°)",
+      "Range formula involves sin(2θ)",
+      "Complementary angles give the same range"
+    ]
+  },
+  question2: {
+    question: "Imagine you throw a ball horizontally from a tall cliff. At the exact same moment, your friend drops an identical ball from the same height. Which ball hits the ground first? Explain why.",
+    correctAnswer: "Both balls hit the ground at the SAME time. This is because horizontal and vertical motions are independent in projectile motion. The vertical motion (falling under gravity) is identical for both balls - they both start from the same height with zero initial vertical velocity. The horizontal velocity of the thrown ball doesn't affect how quickly it falls vertically.",
+    keyPoints: [
+      "Both hit the ground at the same time",
+      "Horizontal and vertical motions are independent",
+      "Only vertical motion determines time to hit ground",
+      "Both have the same vertical motion (same height, same initial vertical velocity of 0)"
+    ]
+  }
+};
+
+async function evaluateWithGemini(questionId, studentAnswer) {
+  const context = QUESTION_CONTEXTS[questionId];
+
+  const evaluationPrompt = `You are a physics teacher evaluating a student's answer to a projectile motion question.
+
+QUESTION:
+${context.question}
+
+STUDENT'S ANSWER:
+${studentAnswer}
+
+CORRECT ANSWER (for reference):
+${context.correctAnswer}
+
+KEY POINTS TO CHECK:
+${context.keyPoints.map((point, i) => `${i + 1}. ${point}`).join('\n')}
+
+Please evaluate the student's answer and provide:
+1. A score out of 10
+2. Detailed feedback that:
+   - Highlights what the student got right
+   - Explains what they missed or got wrong
+   - Provides gentle guidance on concepts they should review
+   - Is encouraging and constructive
+
+Format your response EXACTLY as follows:
+SCORE: X/10
+FEEDBACK: [Your detailed feedback here]
+
+Be fair but rigorous. Award points for:
+- Correct conclusion (40%)
+- Understanding of key concepts (40%)
+- Clear explanation (20%)`;
+
+  try {
+    const GEMINI_API_KEY = config.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
+
+    if (!GEMINI_API_KEY || !GEMINI_API_KEY.trim()) {
+      return {
+        score: 0,
+        feedback: 'Error: No API key found. Please configure your Gemini API key to use AI evaluation.'
+      };
+    }
+
+    console.log('Creating Gemini evaluator...');
+
+    // Use the same configuration as the chat section
+    const apiEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+    const response = await fetch(`${apiEndpoint}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [
+          // System prompt as first message
+          {
+            role: 'user',
+            parts: [{ text: 'You are an expert physics teacher. Evaluate student answers and provide scores with constructive feedback.' }]
+          },
+          {
+            role: 'model',
+            parts: [{ text: 'Understood! I will evaluate student answers fairly and provide constructive feedback with scores.' }]
+          },
+          // Actual evaluation prompt
+          {
+            role: 'user',
+            parts: [{ text: evaluationPrompt }]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 4096,
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Got API response:', data);
+
+    if (!data.candidates || !data.candidates[0]) {
+      throw new Error('Invalid API response: No candidates found');
+    }
+
+    const candidate = data.candidates[0];
+
+    if (!candidate.content || !candidate.content.parts || !candidate.content.parts[0]) {
+      console.error('Missing content in response:', candidate);
+      throw new Error(`No content in response. Finish reason: ${candidate.finishReason || 'unknown'}`);
+    }
+
+    const responseText = candidate.content.parts[0].text;
+    console.log('Got response text:', responseText);
+
+    // Parse the response
+    const scoreMatch = responseText.match(/SCORE:\s*(\d+)\/10/i);
+    const feedbackMatch = responseText.match(/FEEDBACK:\s*([\s\S]+)$/i);
+
+    let score, feedbackText;
+
+    if (scoreMatch && feedbackMatch) {
+      score = parseInt(scoreMatch[1]);
+      feedbackText = feedbackMatch[1].trim();
+    } else {
+      // Fallback parsing if format is not exact
+      const numberMatch = responseText.match(/(\d+)\/10/);
+      score = numberMatch ? parseInt(numberMatch[1]) : 5;
+      feedbackText = responseText.replace(/SCORE:\s*\d+\/10/i, '').replace(/FEEDBACK:/i, '').trim();
+      if (!feedbackText) feedbackText = responseText;
+    }
+
+    // Format the feedback text to HTML with proper formatting
+    const formattedFeedback = formatFeedbackText(feedbackText);
+
+    return {
+      score,
+      feedback: formattedFeedback
+    };
+  } catch (error) {
+    console.error('Error evaluating with Gemini:', error);
+    console.error('Error stack:', error.stack);
+    return {
+      score: 0,
+      feedback: `Error during evaluation: ${error.message}\n\nPlease check the browser console for more details, or try again in a moment.`
+    };
+  }
+}
+
+async function evaluateDescriptiveQuestion1() {
   const textarea = document.getElementById('desc-q1');
   const feedback = document.getElementById('desc-q1-feedback');
   const scoreEl = document.getElementById('desc-q1-score');
   const feedbackText = document.getElementById('desc-q1-feedback-text');
-  const answer = textarea.value.trim().toLowerCase();
+  const submitBtn = document.querySelector('[onclick="evaluateDescriptiveQuestion1()"]');
+  const answer = textarea.value.trim();
 
   if (!answer) {
     alert('Please provide an answer');
     return;
   }
 
-  // Intelligent keyword-based evaluation
-  let score = 0;
-  let feedbackParts = [];
-
-  // Check for key concepts
-  const hasSameRange = answer.includes('same') && (answer.includes('range') || answer.includes('distance'));
-  const hasComplementary = answer.includes('complement') || answer.includes('90') || answer.includes('20 + 70');
-  const hasSinFormula = answer.includes('sin') && answer.includes('2');
-  const mentionsComponents = answer.includes('horizontal') && answer.includes('vertical');
-
-  if (hasSameRange) {
-    score += 3;
-    feedbackParts.push('✓ You correctly identified that they have the same range.');
-  } else {
-    feedbackParts.push('✗ The key insight is that both projectiles actually have the SAME range.');
+  // Disable button and show loading state
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Evaluating with AI...';
   }
 
-  if (hasComplementary) {
-    score += 4;
-    feedbackParts.push('✓ Excellent! You recognized that 20° and 70° are complementary angles (they add up to 90°).');
-  } else {
-    feedbackParts.push('Consider the relationship between 20° and 70° - they add up to 90°.');
-  }
-
-  if (hasSinFormula) {
-    score += 2;
-    feedbackParts.push('✓ Great use of the formula involving sin(2θ)!');
-  }
-
-  if (mentionsComponents) {
-    score += 1;
-    feedbackParts.push('✓ Good analysis of velocity components.');
-  }
-
-  // Ensure minimum score
-  score = Math.max(score, 3);
-
-  // Display feedback
-  scoreEl.textContent = `Score: ${score}/10`;
-  feedbackText.textContent = feedbackParts.join(' ');
+  // Show feedback container with loading message
   feedback.classList.add('visible');
+  scoreEl.textContent = 'Evaluating...';
+  feedbackText.textContent = 'AI is analyzing your answer. This may take a few seconds...';
 
-  // Update total score
-  updateScore(score);
+  try {
+    const result = await evaluateWithGemini('question1', answer);
+
+    // Display results
+    scoreEl.textContent = `Score: ${result.score}/10`;
+    feedbackText.innerHTML = result.feedback;
+
+    // Trigger MathJax to render math formulas
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([feedbackText]).catch((err) => console.error('MathJax error:', err));
+    }
+
+    // Update total score
+    updateScore(result.score);
+  } catch (error) {
+    scoreEl.textContent = 'Error';
+    feedbackText.innerHTML = `<p>Failed to evaluate: ${error.message}</p>`;
+  } finally {
+    // Re-enable button
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit for Evaluation';
+    }
+  }
 }
 
 window.evaluateDescriptiveQuestion1 = evaluateDescriptiveQuestion1;
 
-function evaluateDescriptiveQuestion2() {
+async function evaluateDescriptiveQuestion2() {
   const textarea = document.getElementById('desc-q2');
   const feedback = document.getElementById('desc-q2-feedback');
   const scoreEl = document.getElementById('desc-q2-score');
   const feedbackText = document.getElementById('desc-q2-feedback-text');
-  const answer = textarea.value.trim().toLowerCase();
+  const submitBtn = document.querySelector('[onclick="evaluateDescriptiveQuestion2()"]');
+  const answer = textarea.value.trim();
 
   if (!answer) {
     alert('Please provide an answer');
     return;
   }
 
-  // Intelligent keyword-based evaluation
-  let score = 0;
-  let feedbackParts = [];
-
-  // Check for key concepts
-  const saysSimultaneous = answer.includes('same time') || answer.includes('simultaneous') || answer.includes('together');
-  const mentionsVertical = answer.includes('vertical') && !answer.includes('horizontal');
-  const explainsIndependence = answer.includes('independent') || (answer.includes('horizontal') && answer.includes('vertical'));
-  const correctConclusion = answer.includes('same') && (answer.includes('time') || answer.includes('ground'));
-
-  if (correctConclusion) {
-    score += 4;
-    feedbackParts.push('✓ Correct conclusion - both balls hit the ground at the same time!');
-  } else {
-    feedbackParts.push('✗ The correct answer is that both balls hit the ground at the SAME time.');
+  // Disable button and show loading state
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Evaluating with AI...';
   }
 
-  if (explainsIndependence) {
-    score += 3;
-    feedbackParts.push('✓ Excellent! You understand that horizontal and vertical motions are independent.');
-  } else {
-    feedbackParts.push('Key concept: horizontal and vertical motions are independent of each other.');
-  }
-
-  if (mentionsVertical) {
-    score += 2;
-    feedbackParts.push('✓ Good focus on vertical motion, which is what determines when they hit the ground.');
-  }
-
-  if (answer.includes('gravity')) {
-    score += 1;
-    feedbackParts.push('✓ Correctly mentioned gravity\'s role.');
-  }
-
-  // Ensure minimum score
-  score = Math.max(score, 2);
-
-  // Display feedback
-  scoreEl.textContent = `Score: ${score}/10`;
-  feedbackText.textContent = feedbackParts.join(' ');
+  // Show feedback container with loading message
   feedback.classList.add('visible');
+  scoreEl.textContent = 'Evaluating...';
+  feedbackText.textContent = 'AI is analyzing your answer. This may take a few seconds...';
 
-  // Update total score
-  updateScore(score);
+  try {
+    const result = await evaluateWithGemini('question2', answer);
+
+    // Display results
+    scoreEl.textContent = `Score: ${result.score}/10`;
+    feedbackText.innerHTML = result.feedback;
+
+    // Trigger MathJax to render math formulas
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([feedbackText]).catch((err) => console.error('MathJax error:', err));
+    }
+
+    // Update total score
+    updateScore(result.score);
+  } catch (error) {
+    scoreEl.textContent = 'Error';
+    feedbackText.innerHTML = `<p>Failed to evaluate: ${error.message}</p>`;
+  } finally {
+    // Re-enable button
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit for Evaluation';
+    }
+  }
 }
 
 window.evaluateDescriptiveQuestion2 = evaluateDescriptiveQuestion2;

@@ -533,17 +533,24 @@
       transition: all 0.2s;
     }
 
-    .btn-submit:hover {
+    .btn-submit:hover:not(:disabled) {
       background: #7c3aed;
+    }
+
+    .btn-submit:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      opacity: 0.7;
     }
 
     .ai-feedback {
       margin-top: 20px;
-      padding: 20px;
+      padding: 24px;
       background: #f0f9ff;
       border-left: 4px solid #3b82f6;
       border-radius: 8px;
       display: none;
+      line-height: 1.8;
     }
 
     .ai-feedback.visible {
@@ -554,7 +561,52 @@
       font-size: 24px;
       font-weight: 700;
       color: #1e40af;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #bfdbfe;
+    }
+
+    .ai-feedback-text {
+      font-size: 15px;
+      color: #1e293b;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .ai-feedback-text p {
+      margin-bottom: 16px;
+    }
+
+    .ai-feedback-text strong {
+      color: #1e40af;
+      font-weight: 600;
+    }
+
+    .ai-feedback-text ul,
+    .ai-feedback-text ol {
+      margin: 12px 0;
+      padding-left: 24px;
+    }
+
+    .ai-feedback-text li {
+      margin-bottom: 8px;
+      color: #334155;
+    }
+
+    .ai-feedback-text h4 {
+      color: #1e40af;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 20px 0 12px 0;
+    }
+
+    .ai-feedback-text code {
+      background: #e0f2fe;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #0c4a6e;
     }
 
     /* Floating Buttons */
@@ -1411,7 +1463,7 @@
         </button>
         <div class="ai-feedback" id="desc-q1-feedback">
           <div class="ai-score" id="desc-q1-score"></div>
-          <p id="desc-q1-feedback-text"></p>
+          <p class="ai-feedback-text" id="desc-q1-feedback-text"></p>
         </div>
       </div>
 
@@ -1425,7 +1477,7 @@
         </button>
         <div class="ai-feedback" id="desc-q2-feedback">
           <div class="ai-score" id="desc-q2-score"></div>
-          <p id="desc-q2-feedback-text"></p>
+          <p class="ai-feedback-text" id="desc-q2-feedback-text"></p>
         </div>
       </div>
     </section>
