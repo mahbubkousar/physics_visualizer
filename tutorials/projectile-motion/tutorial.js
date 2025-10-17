@@ -408,6 +408,13 @@ function initializeVisualizations() {
       staticToolsManager.executeToolMethod('launch', v0, theta, 0, y0, color);
       console.log('Launch executed successfully');
       console.log('Canvas in container:', staticVizContainer.querySelector('canvas'));
+
+      // Show animation controls
+      document.getElementById('staticAnimationControls').style.display = 'flex';
+      const staticPlayPauseBtn = document.getElementById('staticPlayPauseBtn');
+      const staticReplayBtn = document.getElementById('staticReplayBtn');
+      if (staticPlayPauseBtn) staticPlayPauseBtn.style.display = 'flex';
+      if (staticReplayBtn) staticReplayBtn.style.display = 'none';
     } catch (error) {
       console.error('Error launching projectile:', error);
     }
@@ -418,7 +425,82 @@ function initializeVisualizations() {
     document.getElementById('static-v0').value = 20;
     document.getElementById('static-angle').value = 45;
     document.getElementById('static-y0').value = 0;
+    // Hide animation controls and live values
+    document.getElementById('staticAnimationControls').style.display = 'none';
+    document.getElementById('staticLiveValues').style.display = 'none';
   });
+
+  // Animation control handlers for static visualization
+  const staticPlayPauseBtn = document.getElementById('staticPlayPauseBtn');
+  const staticReplayBtn = document.getElementById('staticReplayBtn');
+
+  if (staticPlayPauseBtn) {
+    staticPlayPauseBtn.addEventListener('click', () => {
+      const tool = staticToolsManager.getCurrentTool();
+      if (!tool) return;
+
+      const isAnimating = tool.animating || tool.animatingPoint !== null;
+
+      if (!isAnimating) {
+        staticToolsManager.executeToolMethod('replayLatest');
+        const icon = staticPlayPauseBtn.querySelector('i');
+        if (icon) icon.className = 'fas fa-pause';
+        const staticPrevBtn = document.getElementById('staticPrevBtn');
+        const staticNextBtn = document.getElementById('staticNextBtn');
+        if (staticPrevBtn) staticPrevBtn.style.display = 'none';
+        if (staticNextBtn) staticNextBtn.style.display = 'none';
+      } else {
+        const newPausedState = !tool.paused;
+        staticToolsManager.executeToolMethod('setPaused', newPausedState);
+        const icon = staticPlayPauseBtn.querySelector('i');
+        if (icon) icon.className = newPausedState ? 'fas fa-play' : 'fas fa-pause';
+        const staticPrevBtn = document.getElementById('staticPrevBtn');
+        const staticNextBtn = document.getElementById('staticNextBtn');
+        if (staticPrevBtn) staticPrevBtn.style.display = newPausedState ? 'flex' : 'none';
+        if (staticNextBtn) staticNextBtn.style.display = newPausedState ? 'flex' : 'none';
+      }
+    });
+  }
+
+  if (staticReplayBtn) {
+    staticReplayBtn.addEventListener('click', () => {
+      staticToolsManager.executeToolMethod('replayLatest');
+      if (staticPlayPauseBtn) {
+        staticPlayPauseBtn.style.display = 'flex';
+        const icon = staticPlayPauseBtn.querySelector('i');
+        if (icon) icon.className = 'fas fa-pause';
+      }
+      if (staticReplayBtn) staticReplayBtn.style.display = 'none';
+    });
+  }
+
+  // Speed control for static visualization
+  const staticSpeedSelect = document.getElementById('staticSpeedSelect');
+  if (staticSpeedSelect) {
+    staticSpeedSelect.addEventListener('change', (e) => {
+      const speed = parseFloat(e.target.value);
+      const tool = staticToolsManager.getCurrentTool();
+      if (tool && tool.setAnimationSpeed) {
+        tool.setAnimationSpeed(speed);
+      }
+    });
+  }
+
+  // Navigation buttons for static visualization
+  const staticPrevBtn = document.getElementById('staticPrevBtn');
+  const staticNextBtn = document.getElementById('staticNextBtn');
+
+  if (staticPrevBtn) {
+    staticPrevBtn.addEventListener('click', () => {
+      staticToolsManager.executeToolMethod('moveLatestObject', 'left');
+    });
+  }
+
+  if (staticNextBtn) {
+    staticNextBtn.addEventListener('click', () => {
+      staticToolsManager.executeToolMethod('moveLatestObject', 'right');
+    });
+  }
 
   // Initialize Example 1 Visualization
   const example1VizContainer = document.getElementById('example1Viz');
@@ -464,23 +546,106 @@ function initializeVisualizations() {
     console.log('Launching example cannonball');
     // Parameters from example: v0=100 m/s, angle=30°, y0=0
     example1ToolsManager.executeToolMethod('launch', 100, 30, 0, 0, color);
+
+    // Show animation controls
+    document.getElementById('example1AnimationControls').style.display = 'flex';
+    const example1PlayPauseBtn = document.getElementById('example1PlayPauseBtn');
+    const example1ReplayBtn = document.getElementById('example1ReplayBtn');
+    if (example1PlayPauseBtn) example1PlayPauseBtn.style.display = 'flex';
+    if (example1ReplayBtn) example1ReplayBtn.style.display = 'none';
   });
 
   document.getElementById('btnResetExample1')?.addEventListener('click', () => {
     example1ToolsManager.resetCurrentTool();
+    // Hide animation controls and live values
+    document.getElementById('example1AnimationControls').style.display = 'none';
+    document.getElementById('example1LiveValues').style.display = 'none';
   });
 
-  // Initialize Chat Visualization
+  // Animation control handlers for example1 visualization
+  const example1PlayPauseBtn = document.getElementById('example1PlayPauseBtn');
+  const example1ReplayBtn = document.getElementById('example1ReplayBtn');
+
+  if (example1PlayPauseBtn) {
+    example1PlayPauseBtn.addEventListener('click', () => {
+      const tool = example1ToolsManager.getCurrentTool();
+      if (!tool) return;
+
+      const isAnimating = tool.animating || tool.animatingPoint !== null;
+
+      if (!isAnimating) {
+        example1ToolsManager.executeToolMethod('replayLatest');
+        const icon = example1PlayPauseBtn.querySelector('i');
+        if (icon) icon.className = 'fas fa-pause';
+        const example1PrevBtn = document.getElementById('example1PrevBtn');
+        const example1NextBtn = document.getElementById('example1NextBtn');
+        if (example1PrevBtn) example1PrevBtn.style.display = 'none';
+        if (example1NextBtn) example1NextBtn.style.display = 'none';
+      } else {
+        const newPausedState = !tool.paused;
+        example1ToolsManager.executeToolMethod('setPaused', newPausedState);
+        const icon = example1PlayPauseBtn.querySelector('i');
+        if (icon) icon.className = newPausedState ? 'fas fa-play' : 'fas fa-pause';
+        const example1PrevBtn = document.getElementById('example1PrevBtn');
+        const example1NextBtn = document.getElementById('example1NextBtn');
+        if (example1PrevBtn) example1PrevBtn.style.display = newPausedState ? 'flex' : 'none';
+        if (example1NextBtn) example1NextBtn.style.display = newPausedState ? 'flex' : 'none';
+      }
+    });
+  }
+
+  if (example1ReplayBtn) {
+    example1ReplayBtn.addEventListener('click', () => {
+      example1ToolsManager.executeToolMethod('replayLatest');
+      if (example1PlayPauseBtn) {
+        example1PlayPauseBtn.style.display = 'flex';
+        const icon = example1PlayPauseBtn.querySelector('i');
+        if (icon) icon.className = 'fas fa-pause';
+      }
+      if (example1ReplayBtn) example1ReplayBtn.style.display = 'none';
+    });
+  }
+
+  // Speed control for example1 visualization
+  const example1SpeedSelect = document.getElementById('example1SpeedSelect');
+  if (example1SpeedSelect) {
+    example1SpeedSelect.addEventListener('change', (e) => {
+      const speed = parseFloat(e.target.value);
+      const tool = example1ToolsManager.getCurrentTool();
+      if (tool && tool.setAnimationSpeed) {
+        tool.setAnimationSpeed(speed);
+      }
+    });
+  }
+
+  // Navigation buttons for example1 visualization
+  const example1PrevBtn = document.getElementById('example1PrevBtn');
+  const example1NextBtn = document.getElementById('example1NextBtn');
+
+  if (example1PrevBtn) {
+    example1PrevBtn.addEventListener('click', () => {
+      example1ToolsManager.executeToolMethod('moveLatestObject', 'left');
+    });
+  }
+
+  if (example1NextBtn) {
+    example1NextBtn.addEventListener('click', () => {
+      example1ToolsManager.executeToolMethod('moveLatestObject', 'right');
+    });
+  }
+
+  // ============================================
+  // Chat System Integration
+  // ============================================
+
+  // Initialize separate tools manager for chat visualization
   const chatVizContainer = document.getElementById('chatVisualization');
   if (!chatVizContainer) {
     console.error('Chat viz container not found');
     return;
   }
 
-  console.log('Chat viz container found:', chatVizContainer);
-
   const chatToolsManager = new ToolsManager(chatVizContainer);
-  console.log('Chat ToolsManager created');
 
   // Register tools for chat
   chatToolsManager.registerTool('projectile', Projectile, {
@@ -490,7 +655,6 @@ function initializeVisualizations() {
       enablePan: false,
     }
   });
-  console.log('Chat projectile tool registered');
 
   chatToolsManager.registerTool('2dgraph', Graph2D, {
     config: {
@@ -500,33 +664,91 @@ function initializeVisualizations() {
     }
   });
 
-  // Initialize tool definitions for chat
+  // Initialize tool definitions for chat (registers with tool registry)
   initializeToolDefinitions(chatToolsManager);
 
   // Switch to projectile tool
   chatToolsManager.switchTool('projectile');
-  console.log('Chat switched to projectile tool');
-
-  // Set renderer size to match container
-  const chatWidth = chatVizContainer.clientWidth;
-  const chatHeight = chatVizContainer.clientHeight;
-  console.log('Chat container dimensions:', chatWidth, 'x', chatHeight);
-
-  chatToolsManager.three.renderer.setSize(chatWidth, chatHeight);
-  chatToolsManager.three.camera.aspect = chatWidth / chatHeight;
-  chatToolsManager.three.camera.updateProjectionMatrix();
-
   chatToolsManager.startAnimation();
-  console.log('Chat animation started');
-  console.log('Chat canvas:', chatVizContainer.querySelector('canvas'));
 
-  // Hide placeholder initially when visualization initializes
-  const chatPlaceholder = document.querySelector('.chat-viz-placeholder');
-  if (chatPlaceholder) {
-    chatPlaceholder.style.display = 'none';
+  // Make chat tools manager available globally
+  window.chatToolsManager = chatToolsManager;
+
+  // ============================================
+  // Chat Visualization Control Handlers
+  // ============================================
+
+  // Animation control handlers for chat visualization
+  const chatPlayPauseBtn = document.getElementById('chatPlayPauseBtn');
+  const chatReplayBtn = document.getElementById('chatReplayBtn');
+
+  if (chatPlayPauseBtn) {
+    chatPlayPauseBtn.addEventListener('click', () => {
+      const tool = chatToolsManager.getCurrentTool();
+      if (!tool) return;
+
+      const isAnimating = tool.animating || tool.animatingPoint !== null;
+
+      if (!isAnimating) {
+        chatToolsManager.executeToolMethod('replayLatest');
+        const icon = chatPlayPauseBtn.querySelector('i');
+        if (icon) icon.className = 'fas fa-pause';
+        const chatPrevBtn = document.getElementById('chatPrevBtn');
+        const chatNextBtn = document.getElementById('chatNextBtn');
+        if (chatPrevBtn) chatPrevBtn.style.display = 'none';
+        if (chatNextBtn) chatNextBtn.style.display = 'none';
+      } else {
+        const newPausedState = !tool.paused;
+        chatToolsManager.executeToolMethod('setPaused', newPausedState);
+        const icon = chatPlayPauseBtn.querySelector('i');
+        if (icon) icon.className = newPausedState ? 'fas fa-play' : 'fas fa-pause';
+        const chatPrevBtn = document.getElementById('chatPrevBtn');
+        const chatNextBtn = document.getElementById('chatNextBtn');
+        if (chatPrevBtn) chatPrevBtn.style.display = newPausedState ? 'flex' : 'none';
+        if (chatNextBtn) chatNextBtn.style.display = newPausedState ? 'flex' : 'none';
+      }
+    });
   }
 
-  window.chatToolsManager = chatToolsManager;
+  if (chatReplayBtn) {
+    chatReplayBtn.addEventListener('click', () => {
+      chatToolsManager.executeToolMethod('replayLatest');
+      if (chatPlayPauseBtn) {
+        chatPlayPauseBtn.style.display = 'flex';
+        const icon = chatPlayPauseBtn.querySelector('i');
+        if (icon) icon.className = 'fas fa-pause';
+      }
+      if (chatReplayBtn) chatReplayBtn.style.display = 'none';
+    });
+  }
+
+  // Speed control for chat visualization
+  const chatSpeedSelect = document.getElementById('chatSpeedSelect');
+  if (chatSpeedSelect) {
+    chatSpeedSelect.addEventListener('change', (e) => {
+      const speed = parseFloat(e.target.value);
+      const tool = chatToolsManager.getCurrentTool();
+      if (tool && tool.setAnimationSpeed) {
+        tool.setAnimationSpeed(speed);
+      }
+    });
+  }
+
+  // Navigation buttons for chat visualization
+  const chatPrevBtn = document.getElementById('chatPrevBtn');
+  const chatNextBtn = document.getElementById('chatNextBtn');
+
+  if (chatPrevBtn) {
+    chatPrevBtn.addEventListener('click', () => {
+      chatToolsManager.executeToolMethod('moveLatestObject', 'left');
+    });
+  }
+
+  if (chatNextBtn) {
+    chatNextBtn.addEventListener('click', () => {
+      chatToolsManager.executeToolMethod('moveLatestObject', 'right');
+    });
+  }
 
   // Initialize Chat Controller if API key is available
   const GEMINI_API_KEY = config.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
@@ -539,6 +761,7 @@ function initializeVisualizations() {
       });
 
       window.chatController = chatController;
+
       console.log('Chat system initialized');
     } catch (error) {
       console.error('Failed to initialize chat:', error);
@@ -546,102 +769,268 @@ function initializeVisualizations() {
       const chatMessages = document.getElementById('chatMessages');
       if (chatMessages) {
         const errorMsg = document.createElement('div');
-        errorMsg.className = 'chat-message assistant';
-        errorMsg.style.color = '#991b1b';
-        errorMsg.textContent = `Failed to initialize chat: ${error.message}`;
+        errorMsg.className = 'message assistant';
+        errorMsg.innerHTML = `
+          <p>Failed to initialize chat: ${error.message}</p>
+          <p class="hint">Please check your API key configuration.</p>
+        `;
         chatMessages.appendChild(errorMsg);
       }
     }
   } else {
-    console.warn('No API key provided. Using mock responses.');
+    console.warn('No API key provided. Chat features will not be available.');
+
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+      const warningMsg = document.createElement('div');
+      warningMsg.className = 'message assistant';
+      warningMsg.innerHTML = `
+        <p>No API key found. Please add your Gemini API key to config.js to use the chat feature.</p>
+        <p class="hint">Get your API key from: https://aistudio.google.com/app/apikey</p>
+      `;
+      chatMessages.appendChild(warningMsg);
+    }
   }
 
   // Chat input handlers
-  document.getElementById('sendBtn')?.addEventListener('click', () => {
-    sendChatMessage(chatToolsManager);
-  });
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
 
-  document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+  function sendMessage() {
+    if (!chatInput.value.trim()) return;
+
+    const message = chatInput.value.trim();
+    chatInput.value = '';
+
+    if (window.chatController) {
+      window.chatController.sendMessage(message);
+    } else {
+      // Show error if no chat controller
+      const chatMessages = document.getElementById('chatMessages');
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'message assistant';
+      errorMsg.textContent = 'Chat is not available. Please configure your API key.';
+      chatMessages.appendChild(errorMsg);
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      sendChatMessage(chatToolsManager);
+      sendMessage();
     }
   });
+
+  console.log('Chat playground initialized');
 }
 
-function sendChatMessage(chatToolsManager) {
-  const input = document.getElementById('chatInput');
-  const message = input.value.trim();
+// ===================================
+// Live Values Display Helper Functions
+// ===================================
 
-  if (!message) return;
+// For Static Visualization
+window.updateLiveValuesStatic = (x, y, vx, vy) => {
+  const liveX = document.getElementById('staticLiveX');
+  const liveY = document.getElementById('staticLiveY');
+  const liveV = document.getElementById('staticLiveV');
+  const liveVelocity = document.getElementById('staticLiveVelocity');
 
-  // Add user message to chat
-  addMessageToChat(message, 'user');
+  if (liveX) liveX.textContent = x.toFixed(2);
+  if (liveY) liveY.textContent = y.toFixed(2);
 
-  // Clear input
-  input.value = '';
-
-  // If ChatController is available, use it
-  if (window.chatController) {
-    window.chatController.sendMessage(message);
-  } else {
-    // Otherwise use mock AI response
-    setTimeout(() => {
-      processAIResponse(message, chatToolsManager);
-    }, 1000);
+  if (vx !== undefined && vy !== undefined && liveV && liveVelocity) {
+    const speed = Math.sqrt(vx * vx + vy * vy);
+    liveV.textContent = speed.toFixed(2);
+    liveVelocity.style.display = 'flex';
+  } else if (liveVelocity) {
+    liveVelocity.style.display = 'none';
   }
-}
+};
 
-function addMessageToChat(message, sender) {
-  const chatMessages = document.getElementById('chatMessages');
-  const messageDiv = document.createElement('div');
-
-  messageDiv.className = 'chat-message ' + sender;
-  messageDiv.textContent = message;
-  chatMessages.appendChild(messageDiv);
-
-  // Scroll to bottom
-  chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function processAIResponse(userMessage, chatToolsManager) {
-  const msg = userMessage.toLowerCase();
-
-  // Simple pattern matching for demo
-  if (msg.includes('show') || msg.includes('visualize') || msg.includes('simulate') || msg.includes('launch')) {
-    // Try to parse parameters from the message
-    const velocityMatch = msg.match(/(\d+)\s*(m\/s|ms|meters)/);
-    const angleMatch = msg.match(/(\d+)\s*(degree|deg|°)/);
-    const heightMatch = msg.match(/height.*?(\d+)/);
-
-    const v0 = velocityMatch ? parseFloat(velocityMatch[1]) : 25;
-    const theta = angleMatch ? parseFloat(angleMatch[1]) : 45;
-    const y0 = heightMatch ? parseFloat(heightMatch[1]) : 0;
-
-    addMessageToChat(`Sure! I'll show you a projectile with initial velocity ${v0} m/s at ${theta}° angle from height ${y0} m.`, 'assistant');
-
-    // Hide placeholder and launch visualization
-    const placeholder = document.querySelector('.chat-viz-placeholder');
-    if (placeholder) {
-      placeholder.style.display = 'none';
-    }
-
-    // Random color
-    const colors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
-    const color = colors[Math.floor(Math.random() * colors.length)];
-
-    setTimeout(() => {
-      chatToolsManager.executeToolMethod('launch', v0, theta, 0, y0, color);
-    }, 500);
-
-  } else if (msg.includes('what') || msg.includes('explain') || msg.includes('why')) {
-    addMessageToChat('That\'s a great question! In projectile motion, the key is understanding that horizontal and vertical motions are independent. What specific aspect would you like me to explain more?', 'assistant');
-  } else if (msg.includes('help')) {
-    addMessageToChat('I can help you with:\n• Explaining projectile motion concepts\n• Creating custom visualizations\n• Solving example problems\n\nJust ask me anything! Try: "show a projectile at 30 m/s at 60 degrees"', 'assistant');
-  } else {
-    addMessageToChat('I can help you understand projectile motion! Try asking me to "show a projectile at 30 m/s at 60 degrees" or ask "what is the maximum height?"', 'assistant');
+window.showLiveValuesStatic = () => {
+  const liveValues = document.getElementById('staticLiveValues');
+  if (liveValues) {
+    liveValues.style.display = 'flex';
   }
-}
+};
+
+window.hideLiveValuesStatic = () => {
+  const liveValues = document.getElementById('staticLiveValues');
+  if (liveValues) {
+    liveValues.style.display = 'none';
+  }
+};
+
+// For Example1 Visualization
+window.updateLiveValuesExample1 = (x, y, vx, vy) => {
+  const liveX = document.getElementById('example1LiveX');
+  const liveY = document.getElementById('example1LiveY');
+  const liveV = document.getElementById('example1LiveV');
+  const liveVelocity = document.getElementById('example1LiveVelocity');
+
+  if (liveX) liveX.textContent = x.toFixed(2);
+  if (liveY) liveY.textContent = y.toFixed(2);
+
+  if (vx !== undefined && vy !== undefined && liveV && liveVelocity) {
+    const speed = Math.sqrt(vx * vx + vy * vy);
+    liveV.textContent = speed.toFixed(2);
+    liveVelocity.style.display = 'flex';
+  } else if (liveVelocity) {
+    liveVelocity.style.display = 'none';
+  }
+};
+
+window.showLiveValuesExample1 = () => {
+  const liveValues = document.getElementById('example1LiveValues');
+  if (liveValues) {
+    liveValues.style.display = 'flex';
+  }
+};
+
+window.hideLiveValuesExample1 = () => {
+  const liveValues = document.getElementById('example1LiveValues');
+  if (liveValues) {
+    liveValues.style.display = 'none';
+  }
+};
+
+// For Chat Visualization
+window.updateLiveValuesChat = (x, y, vx, vy) => {
+  const liveX = document.getElementById('chatLiveX');
+  const liveY = document.getElementById('chatLiveY');
+  const liveV = document.getElementById('chatLiveV');
+  const liveVelocity = document.getElementById('chatLiveVelocity');
+
+  if (liveX) liveX.textContent = x.toFixed(2);
+  if (liveY) liveY.textContent = y.toFixed(2);
+
+  if (vx !== undefined && vy !== undefined && liveV && liveVelocity) {
+    const speed = Math.sqrt(vx * vx + vy * vy);
+    liveV.textContent = speed.toFixed(2);
+    liveVelocity.style.display = 'flex';
+  } else if (liveVelocity) {
+    liveVelocity.style.display = 'none';
+  }
+};
+
+window.showLiveValuesChat = () => {
+  const liveValues = document.getElementById('chatLiveValues');
+  if (liveValues) {
+    liveValues.style.display = 'flex';
+  }
+};
+
+window.hideLiveValuesChat = () => {
+  const liveValues = document.getElementById('chatLiveValues');
+  if (liveValues) {
+    liveValues.style.display = 'none';
+  }
+};
+
+// Generic functions that tools will call
+window.updateLiveValues = (x, y, vx, vy) => {
+  window.updateLiveValuesStatic(x, y, vx, vy);
+  window.updateLiveValuesExample1(x, y, vx, vy);
+  window.updateLiveValuesChat(x, y, vx, vy);
+};
+
+window.showLiveValues = () => {
+  window.showLiveValuesStatic();
+  window.showLiveValuesExample1();
+  window.showLiveValuesChat();
+};
+
+window.hideLiveValues = () => {
+  window.hideLiveValuesStatic();
+  window.hideLiveValuesExample1();
+  window.hideLiveValuesChat();
+};
+
+// Global helper functions that tools can call
+window.showControls = () => {
+  // Static visualization controls
+  const staticControls = document.getElementById('staticAnimationControls');
+  const staticPlayPause = document.getElementById('staticPlayPauseBtn');
+  const staticReplay = document.getElementById('staticReplayBtn');
+
+  if (staticControls) staticControls.style.display = 'flex';
+  if (staticPlayPause) staticPlayPause.style.display = 'flex';
+  if (staticReplay) staticReplay.style.display = 'none';
+
+  // Example1 visualization controls
+  const example1Controls = document.getElementById('example1AnimationControls');
+  const example1PlayPause = document.getElementById('example1PlayPauseBtn');
+  const example1Replay = document.getElementById('example1ReplayBtn');
+
+  if (example1Controls) example1Controls.style.display = 'flex';
+  if (example1PlayPause) example1PlayPause.style.display = 'flex';
+  if (example1Replay) example1Replay.style.display = 'none';
+
+  // Chat visualization controls
+  const chatPlayPause = document.getElementById('chatPlayPauseBtn');
+  const chatReplay = document.getElementById('chatReplayBtn');
+
+  if (chatPlayPause) chatPlayPause.style.display = 'flex';
+  if (chatReplay) chatReplay.style.display = 'none';
+
+  // Hide navigation arrows during animation
+  const staticPrevBtn = document.getElementById('staticPrevBtn');
+  const staticNextBtn = document.getElementById('staticNextBtn');
+  const example1PrevBtn = document.getElementById('example1PrevBtn');
+  const example1NextBtn = document.getElementById('example1NextBtn');
+  const chatPrevBtn = document.getElementById('chatPrevBtn');
+  const chatNextBtn = document.getElementById('chatNextBtn');
+
+  if (staticPrevBtn) staticPrevBtn.style.display = 'none';
+  if (staticNextBtn) staticNextBtn.style.display = 'none';
+  if (example1PrevBtn) example1PrevBtn.style.display = 'none';
+  if (example1NextBtn) example1NextBtn.style.display = 'none';
+  if (chatPrevBtn) chatPrevBtn.style.display = 'none';
+  if (chatNextBtn) chatNextBtn.style.display = 'none';
+};
+
+window.showFinishedControls = () => {
+  // Static visualization controls
+  const staticControls = document.getElementById('staticAnimationControls');
+  const staticPlayPause = document.getElementById('staticPlayPauseBtn');
+  const staticReplay = document.getElementById('staticReplayBtn');
+
+  if (staticControls) staticControls.style.display = 'flex';
+  if (staticPlayPause) staticPlayPause.style.display = 'none';
+  if (staticReplay) staticReplay.style.display = 'flex';
+
+  // Example1 visualization controls
+  const example1Controls = document.getElementById('example1AnimationControls');
+  const example1PlayPause = document.getElementById('example1PlayPauseBtn');
+  const example1Replay = document.getElementById('example1ReplayBtn');
+
+  if (example1Controls) example1Controls.style.display = 'flex';
+  if (example1PlayPause) example1PlayPause.style.display = 'none';
+  if (example1Replay) example1Replay.style.display = 'flex';
+
+  // Chat visualization controls
+  const chatPlayPause = document.getElementById('chatPlayPauseBtn');
+  const chatReplay = document.getElementById('chatReplayBtn');
+
+  if (chatPlayPause) chatPlayPause.style.display = 'none';
+  if (chatReplay) chatReplay.style.display = 'flex';
+
+  // Show navigation arrows when animation is finished
+  const staticPrevBtn = document.getElementById('staticPrevBtn');
+  const staticNextBtn = document.getElementById('staticNextBtn');
+  const example1PrevBtn = document.getElementById('example1PrevBtn');
+  const example1NextBtn = document.getElementById('example1NextBtn');
+  const chatPrevBtn = document.getElementById('chatPrevBtn');
+  const chatNextBtn = document.getElementById('chatNextBtn');
+
+  if (staticPrevBtn) staticPrevBtn.style.display = 'flex';
+  if (staticNextBtn) staticNextBtn.style.display = 'flex';
+  if (example1PrevBtn) example1PrevBtn.style.display = 'flex';
+  if (example1NextBtn) example1NextBtn.style.display = 'flex';
+  if (chatPrevBtn) chatPrevBtn.style.display = 'flex';
+  if (chatNextBtn) chatNextBtn.style.display = 'flex';
+};
 
 // ===================================
 // Initialize

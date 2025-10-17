@@ -145,6 +145,31 @@
       border-bottom: 1px solid #e8eaed;
     }
 
+    .section-header {
+      margin-bottom: 30px;
+    }
+
+    .section-header h2 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .section-header h2 i {
+      color: #667eea;
+    }
+
+    .section-header p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+
     .tutorial-section h2 i {
       font-size: 28px;
       color: #2c3e50;
@@ -307,7 +332,7 @@
       overflow: hidden;
     }
 
-    .viz-canvas > * {
+    .viz-canvas > *:not(.speed-nav-controls) {
       position: absolute;
       top: 0;
       left: 0;
@@ -532,205 +557,6 @@
       margin-bottom: 12px;
     }
 
-    /* Chat Section Styles */
-    .chat-container {
-      background: #ffffff;
-      border: 1px solid #e8eaed;
-      border-radius: 12px;
-      padding: 24px;
-      margin-top: 32px;
-    }
-
-    .chat-grid {
-      display: grid;
-      grid-template-columns: 420px 1fr;
-      gap: 24px;
-      height: 580px;
-    }
-
-    .chat-panel {
-      background: #ffffff;
-      border-radius: 8px;
-      border: 1px solid #e8eaed;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      height: 100%;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
-
-    .chat-messages {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      scroll-behavior: smooth;
-      background: #f9fafb;
-    }
-
-    .chat-messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chat-messages::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb {
-      background: #d1d5db;
-      border-radius: 3px;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb:hover {
-      background: #9ca3af;
-    }
-
-    .chat-message {
-      max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 18px;
-      font-size: 14px;
-      line-height: 1.5;
-      animation: messageSlideIn 0.25s ease-out;
-      word-wrap: break-word;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
-
-    @keyframes messageSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(8px) scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
-    .chat-message.user {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-      color: #fff;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-      margin-left: auto;
-    }
-
-    .chat-message.assistant {
-      background: #ffffff;
-      color: #1f2937;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-      border: 1px solid #e5e7eb;
-      margin-right: auto;
-    }
-
-    .chat-input-area {
-      padding: 12px 16px;
-      background: #ffffff;
-      border-top: 1px solid #e5e7eb;
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-    }
-
-    .chat-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid #e5e7eb;
-      border-radius: 20px;
-      font-size: 14px;
-      font-family: 'Inter', sans-serif;
-      resize: none;
-      transition: all 0.2s;
-      background: #f9fafb;
-      max-height: 100px;
-    }
-
-    .chat-input:focus {
-      outline: none;
-      border-color: #2c3e50;
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
-    }
-
-    .chat-input::placeholder {
-      color: #9ca3af;
-    }
-
-    .chat-send-btn {
-      width: 40px;
-      height: 40px;
-      padding: 0;
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 2px 4px rgba(44, 62, 80, 0.2);
-    }
-
-    .chat-send-btn:hover {
-      background: linear-gradient(135deg, #1e293b 0%, #2c3e50 100%);
-      transform: scale(1.05);
-      box-shadow: 0 4px 8px rgba(44, 62, 80, 0.3);
-    }
-
-    .chat-send-btn:active {
-      transform: scale(0.95);
-    }
-
-    .chat-send-btn i {
-      margin-left: 2px;
-    }
-
-    .chat-viz-panel {
-      background: #fafbfc;
-      border-radius: 8px;
-      border: 1px solid #e8eaed;
-      position: relative;
-      overflow: hidden;
-      height: 100%;
-      padding: 20px;
-    }
-
-    .chat-viz-placeholder {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #9ca3af;
-      font-size: 14px;
-      text-align: center;
-      padding: 20px;
-      flex-direction: column;
-      gap: 12px;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .chat-viz-panel canvas {
-      position: absolute !important;
-      top: 20px !important;
-      left: 20px !important;
-      right: 20px !important;
-      bottom: 20px !important;
-      width: calc(100% - 40px) !important;
-      height: calc(100% - 40px) !important;
-      display: block !important;
-    }
-
     /* Floating Buttons */
     .floating-toc, .floating-ai {
       position: fixed;
@@ -908,6 +734,288 @@
         height: 400px;
       }
     }
+
+    /* Chat Section Styles */
+    .chat-viz-container {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 30px;
+      min-height: 600px;
+      margin-top: 32px;
+    }
+
+    .chat-sidebar {
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 500px;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 12px;
+      line-height: 1.5;
+      font-size: 14px;
+      max-width: 85%;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: #667eea;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: white;
+      color: #333;
+      border: 1px solid #dee2e6;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message .hint {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 12px;
+      opacity: 0.8;
+      font-style: italic;
+    }
+
+    .typing-indicator {
+      padding: 12px 20px;
+      display: none;
+    }
+
+    .typing-indicator.active {
+      display: block;
+    }
+
+    .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #aaa;
+      margin: 0 2px;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
+
+    .chat-input-container {
+      padding: 15px;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      gap: 10px;
+    }
+
+    #chatInput {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+    }
+
+    #chatInput:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn-send {
+      padding: 12px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .btn-send:hover {
+      background: #5568d3;
+      transform: scale(1.05);
+    }
+
+    .chat-viz-panel {
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 2px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+    }
+
+    .viz-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: #999;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .viz-placeholder i {
+      font-size: 64px;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+
+    .viz-placeholder p {
+      font-size: 16px;
+    }
+
+    /* All Controls Container - TOP CORNER */
+    .speed-nav-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .speed-dropdown {
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      font-size: 12px;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .speed-dropdown:hover {
+      border-color: #667eea;
+    }
+
+    .speed-dropdown:focus {
+      border-color: #667eea;
+    }
+
+    .nav-btn,
+    .anim-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background: rgba(255, 255, 255, 0.95);
+      color: #667eea;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      padding: 0;
+    }
+
+    .nav-btn:hover,
+    .anim-btn:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .nav-btn:active,
+    .anim-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Live Values Display - POSITIONED BELOW CANVAS */
+    .live-values {
+      position: relative;
+      margin-top: 20px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .live-value-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      font-family: 'Courier New', monospace;
+    }
+
+    .live-label {
+      font-weight: bold;
+      color: #667eea;
+      font-size: 14px;
+      min-width: 20px;
+    }
+
+    .live-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .live-unit {
+      font-size: 12px;
+      color: #666;
+      opacity: 0.8;
+    }
+
+    .live-value-item.velocity {
+      border-left: 2px solid #ccc;
+      padding-left: 30px;
+      margin-left: 0;
+    }
+
+    /* Chat visualization specific container */
+    .chat-viz-panel > div {
+      position: relative;
+    }
+
+    .chat-viz-panel #chatVisualization {
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 1024px) {
+      .chat-viz-container {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1019,9 +1127,53 @@
 
       <div class="viz-wrapper">
         <div class="viz-display-section">
-          <div class="viz-canvas" id="staticViz">
-            <div id="staticVizPlaceholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af; font-size: 14px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
-              Click "Run Simulation" to visualize projectile motion
+          <div>
+            <div class="viz-canvas" id="staticViz">
+              <div id="staticVizPlaceholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af; font-size: 14px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                Click "Run Simulation" to visualize projectile motion
+              </div>
+
+              <!-- All Controls in Top Corner -->
+              <div class="speed-nav-controls" id="staticSpeedNavControls">
+                <select id="staticSpeedSelect" class="speed-dropdown" title="Animation Speed">
+                  <option value="0.25">0.25x</option>
+                  <option value="0.5">0.5x</option>
+                  <option value="1" selected>1x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="2">2x</option>
+                </select>
+                <button class="anim-btn" id="staticPlayPauseBtn" title="Play/Pause" style="display: none;">
+                  <i class="fas fa-pause"></i>
+                </button>
+                <button class="anim-btn" id="staticReplayBtn" title="Replay" style="display: none;">
+                  <i class="fas fa-redo"></i>
+                </button>
+                <button class="nav-btn" id="staticPrevBtn" title="Previous Frame" style="display: none;">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="nav-btn" id="staticNextBtn" title="Next Frame" style="display: none;">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Live Values Display - BELOW THE CANVAS -->
+            <div class="live-values" id="staticLiveValues" style="display: none;">
+              <div class="live-value-item">
+                <span class="live-label">X:</span>
+                <span class="live-value" id="staticLiveX">0.00</span>
+                <span class="live-unit">m</span>
+              </div>
+              <div class="live-value-item">
+                <span class="live-label">Y:</span>
+                <span class="live-value" id="staticLiveY">0.00</span>
+                <span class="live-unit">m</span>
+              </div>
+              <div class="live-value-item velocity" id="staticLiveVelocity" style="display: none;">
+                <span class="live-label">V:</span>
+                <span class="live-value" id="staticLiveV">0.00</span>
+                <span class="live-unit">m/s</span>
+              </div>
             </div>
           </div>
 
@@ -1133,6 +1285,48 @@
           <div id="example1VizPlaceholder" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af; font-size: 14px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
             Click "Run Example" to visualize this cannonball problem
           </div>
+
+          <!-- All Controls in Top Corner -->
+          <div class="speed-nav-controls" id="example1SpeedNavControls">
+            <select id="example1SpeedSelect" class="speed-dropdown" title="Animation Speed">
+              <option value="0.25">0.25x</option>
+              <option value="0.5">0.5x</option>
+              <option value="1" selected>1x</option>
+              <option value="1.5">1.5x</option>
+              <option value="2">2x</option>
+            </select>
+            <button class="anim-btn" id="example1PlayPauseBtn" title="Play/Pause" style="display: none;">
+              <i class="fas fa-pause"></i>
+            </button>
+            <button class="anim-btn" id="example1ReplayBtn" title="Replay" style="display: none;">
+              <i class="fas fa-redo"></i>
+            </button>
+            <button class="nav-btn" id="example1PrevBtn" title="Previous Frame" style="display: none;">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="nav-btn" id="example1NextBtn" title="Next Frame" style="display: none;">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Values Display - BELOW THE CANVAS -->
+        <div class="live-values" id="example1LiveValues" style="display: none;">
+          <div class="live-value-item">
+            <span class="live-label">X:</span>
+            <span class="live-value" id="example1LiveX">0.00</span>
+            <span class="live-unit">m</span>
+          </div>
+          <div class="live-value-item">
+            <span class="live-label">Y:</span>
+            <span class="live-value" id="example1LiveY">0.00</span>
+            <span class="live-unit">m</span>
+          </div>
+          <div class="live-value-item velocity" id="example1LiveVelocity" style="display: none;">
+            <span class="live-label">V:</span>
+            <span class="live-value" id="example1LiveV">0.00</span>
+            <span class="live-unit">m/s</span>
+          </div>
         </div>
 
         <div class="viz-actions" style="justify-content: center;">
@@ -1237,35 +1431,83 @@
     </section>
 
     <!-- Section 9: Chat Playground -->
-    <section class="tutorial-section" id="section-9" data-section="9">
-      <h2><i class="fas fa-comments"></i> Playground: The Chat-Controlled Visualizer</h2>
+    <section class="tutorial-section chat-section" id="section-9" data-section="9">
+      <div class="section-header">
+        <h2><i class="fas fa-comments"></i> Ask AI Tutor</h2>
+        <p>Have questions? Ask our AI tutor for personalized help and custom visualizations</p>
+      </div>
 
-      <p>You've learned the theory, now it's time to experiment! Use plain English to command the visualizer. Ask questions, change parameters, and see what happens.</p>
+      <div class="chat-viz-container">
+        <!-- Sidebar Chat -->
+        <div class="chat-sidebar">
+          <div class="chat-messages" id="chatMessages">
+            <div class="message assistant">
+              <p>Hello! I'm your AI physics tutor. Ask me anything about projectile motion, or request a custom visualization!</p>
+              <p class="hint">Try: "Show me a projectile launched at 30 m/s at 60 degrees"</p>
+            </div>
+          </div>
 
-      <div class="chat-container">
-        <div class="chat-grid">
-          <!-- Chat Panel -->
-          <div class="chat-panel">
-            <div class="chat-messages" id="chatMessages">
-              <div class="chat-message assistant">
-                <p>Hello! I'm your AI physics tutor. Ask me anything about projectile motion, or request a custom visualization!</p>
-                <p style="margin-top: 8px; font-size: 12px; opacity: 0.7; font-style: italic;">Try: "Show me a projectile launched at 30 m/s at 60 degrees"</p>
-              </div>
+          <div class="typing-indicator" id="typingIndicator">
+            <span></span><span></span><span></span>
+          </div>
+
+          <div class="chat-input-container">
+            <textarea id="chatInput" placeholder="Ask a question or request a visualization..." rows="2"></textarea>
+            <button id="sendBtn" class="btn-send">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Visualization Panel for Chat -->
+        <div class="chat-viz-panel">
+          <div style="position: relative; height: 500px;">
+            <div id="chatVisualization" style="width: 100%; height: 100%;"></div>
+            <div class="viz-placeholder" style="display: none;">
+              <i class="fas fa-chart-area"></i>
+              <p>Visualizations from your questions will appear here</p>
             </div>
 
-            <div class="chat-input-area">
-              <textarea id="chatInput" class="chat-input" placeholder="Ask a question or request a visualization..." rows="2"></textarea>
-              <button id="sendBtn" class="chat-send-btn">
-                <i class="fas fa-paper-plane"></i>
+            <!-- All Controls in Top Corner for Chat -->
+            <div class="speed-nav-controls" id="chatSpeedNavControls">
+              <select id="chatSpeedSelect" class="speed-dropdown" title="Animation Speed">
+                <option value="0.25">0.25x</option>
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+              </select>
+              <button class="anim-btn" id="chatPlayPauseBtn" title="Play/Pause" style="display: none;">
+                <i class="fas fa-pause"></i>
+              </button>
+              <button class="anim-btn" id="chatReplayBtn" title="Replay" style="display: none;">
+                <i class="fas fa-redo"></i>
+              </button>
+              <button class="nav-btn" id="chatPrevBtn" title="Previous Frame" style="display: none;">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="nav-btn" id="chatNextBtn" title="Next Frame" style="display: none;">
+                <i class="fas fa-chevron-right"></i>
               </button>
             </div>
           </div>
 
-          <!-- Visualization Panel -->
-          <div class="chat-viz-panel" id="chatVisualization">
-            <div class="chat-viz-placeholder">
-              <i class="fas fa-chart-area" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
-              <p>Visualizations from your questions will appear here</p>
+          <!-- Live Values Display for Chat - BELOW THE CANVAS -->
+          <div class="live-values" id="chatLiveValues" style="display: none;">
+            <div class="live-value-item">
+              <span class="live-label">X:</span>
+              <span class="live-value" id="chatLiveX">0.00</span>
+              <span class="live-unit">m</span>
+            </div>
+            <div class="live-value-item">
+              <span class="live-label">Y:</span>
+              <span class="live-value" id="chatLiveY">0.00</span>
+              <span class="live-unit">m</span>
+            </div>
+            <div class="live-value-item velocity" id="chatLiveVelocity" style="display: none;">
+              <span class="live-label">V:</span>
+              <span class="live-value" id="chatLiveV">0.00</span>
+              <span class="live-unit">m/s</span>
             </div>
           </div>
         </div>
