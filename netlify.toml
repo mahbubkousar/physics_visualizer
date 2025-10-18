@@ -1,37 +1,61 @@
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-    Content-Type = "application/javascript; charset=utf-8"
+# Netlify Configuration for ES6 Modules
 
+# JavaScript MIME type headers - MOST SPECIFIC FIRST
 [[headers]]
-  for = "/src/*.js"
+  for = "/src/core/*.js"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
     Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/src/tools/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
 
 [[headers]]
   for = "/src/**/*.js"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
     Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"
 
 [[headers]]
-  for = "/tutorials/*.js"
+  for = "/tutorials/projectile-motion/*.js"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
     Cache-Control = "public, max-age=3600"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/tutorials/2d-graphs/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+    Access-Control-Allow-Origin = "*"
 
 [[headers]]
   for = "/tutorials/**/*.js"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
     Cache-Control = "public, max-age=3600"
+    Access-Control-Allow-Origin = "*"
 
 [[headers]]
   for = "/config.js"
   [headers.values]
     Content-Type = "application/javascript; charset=utf-8"
+    Access-Control-Allow-Origin = "*"
 
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
+    Access-Control-Allow-Origin = "*"
+
+# General security headers (LAST, least specific)
 [[headers]]
   for = "/*"
   [headers.values]
@@ -39,8 +63,6 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-
-# No redirects - serve files as-is
 
 # Build settings
 [build]

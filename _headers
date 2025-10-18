@@ -1,29 +1,49 @@
-/*.js
-  Content-Type: application/javascript; charset=utf-8
-  X-Content-Type-Options: nosniff
+# Netlify Headers for ES6 Modules
 
-/src/*.js
+/src/core/*.js
   Content-Type: application/javascript; charset=utf-8
   Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/src/tools/*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
 /src/**/*.js
   Content-Type: application/javascript; charset=utf-8
   Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
-/tutorials/*.js
+/tutorials/projectile-motion/*.js
   Content-Type: application/javascript; charset=utf-8
   Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/tutorials/2d-graphs/*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
 /tutorials/**/*.js
   Content-Type: application/javascript; charset=utf-8
   Cache-Control: public, max-age=3600
+  Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
 /config.js
   Content-Type: application/javascript; charset=utf-8
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/*.js
+  Content-Type: application/javascript; charset=utf-8
+  Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
 /*
