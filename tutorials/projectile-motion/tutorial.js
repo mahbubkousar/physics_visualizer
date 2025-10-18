@@ -11,6 +11,206 @@ import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
 import { config } from '../../config.js';
 
 // ===================================
+// Story Feed System
+// ===================================
+
+const stories = [
+  {
+    title: "Speed of Light",
+    content: "Light travels at 299,792,458 meters per second. At this speed, you could circle the Earth 7.5 times in just ONE second!",
+    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+  },
+  {
+    title: "Gravity Mystery",
+    content: "Gravity is the weakest of the four fundamental forces, yet it dominates the universe at large scales. A tiny magnet can overcome Earth's entire gravitational pull!",
+    background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+  },
+  {
+    title: "Quantum Leap",
+    content: "Electrons can 'jump' between energy levels instantly without passing through the space in between. This is called a quantum leap!",
+    background: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+  },
+  {
+    title: "Time Dilation",
+    content: "Time moves slower in stronger gravitational fields. Astronauts on the ISS age slightly slower than people on Earth - about 0.007 seconds over 6 months!",
+    background: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
+  },
+  {
+    title: "Black Holes",
+    content: "A black hole's gravity is so strong that not even light can escape. The boundary of no return is called the 'event horizon.'",
+    background: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+  },
+  {
+    title: "Newton's Apple",
+    content: "The famous apple story is probably true! Newton himself told it later in life. The apple didn't hit his head though - he just saw it fall.",
+    background: "linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
+  },
+  {
+    title: "Sound Barrier",
+    content: "Sound travels at 343 m/s in air. The 'sonic boom' happens when an object moves faster than sound, creating a shock wave of compressed air.",
+    background: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+  },
+  {
+    title: "Vacuum Power",
+    content: "In a vacuum, a feather and a hammer fall at the exact same speed! This was famously demonstrated on the Moon by astronaut David Scott in 1971.",
+    background: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)"
+  },
+  {
+    title: "Energy's Secret",
+    content: "Energy cannot be created or destroyed, only transformed. Every bit of energy in your body was once part of stars that exploded billions of years ago!",
+    background: "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
+  },
+  {
+    title: "Atomic Truth",
+    content: "Atoms are 99.9999999% empty space! If an atom were the size of a football stadium, its nucleus would be the size of a pea at the center.",
+    background: "linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)"
+  },
+  {
+    title: "Terminal Speed",
+    content: "When falling through air, objects reach a 'terminal velocity' where air resistance equals gravity. For humans, it's about 195 km/h (120 mph) belly-down!",
+    background: "linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)"
+  }
+];
+
+let currentStoryIndex = 0;
+let storyProgressTimer = null;
+let viewedStories = new Set();
+
+function initializeStoryFeed() {
+  const storyItems = document.querySelectorAll('.story-item');
+  const storyViewer = document.getElementById('storyViewer');
+  const storyViewerClose = document.getElementById('storyViewerClose');
+  const storyNavPrev = document.getElementById('storyNavPrev');
+  const storyNavNext = document.getElementById('storyNavNext');
+
+  // Add click handlers to story items
+  storyItems.forEach((item, index) => {
+    item.addEventListener('click', () => {
+      openStory(index);
+    });
+  });
+
+  // Close button
+  storyViewerClose.addEventListener('click', closeStory);
+
+  // Navigation
+  storyNavPrev.addEventListener('click', () => {
+    if (currentStoryIndex > 0) {
+      showStory(currentStoryIndex - 1);
+    }
+  });
+
+  storyNavNext.addEventListener('click', () => {
+    if (currentStoryIndex < stories.length - 1) {
+      showStory(currentStoryIndex + 1);
+    } else {
+      closeStory();
+    }
+  });
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && storyViewer.classList.contains('active')) {
+      closeStory();
+    }
+  });
+
+  // Close on background click
+  storyViewer.addEventListener('click', (e) => {
+    if (e.target === storyViewer) {
+      closeStory();
+    }
+  });
+}
+
+function openStory(index) {
+  currentStoryIndex = index;
+  const storyViewer = document.getElementById('storyViewer');
+  storyViewer.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Create progress bars
+  const progressBars = document.getElementById('storyProgressBars');
+  progressBars.innerHTML = '';
+  stories.forEach((_, i) => {
+    const bar = document.createElement('div');
+    bar.className = 'story-progress-bar';
+    bar.innerHTML = '<div class="story-progress-bar-fill"></div>';
+    progressBars.appendChild(bar);
+  });
+
+  showStory(index);
+}
+
+function showStory(index) {
+  if (index < 0 || index >= stories.length) return;
+
+  currentStoryIndex = index;
+  const story = stories[index];
+
+  // Mark as viewed
+  viewedStories.add(index);
+  const storyItem = document.querySelector(`.story-item[data-story-id="${index}"]`);
+  if (storyItem) {
+    storyItem.classList.add('viewed');
+  }
+
+  // Update viewer content
+  const background = document.getElementById('storyViewerBackground');
+  const text = document.getElementById('storyViewerText');
+  const title = document.getElementById('storyViewerTitle');
+
+  background.style.background = story.background;
+  text.innerHTML = `
+    <h2>${story.title}</h2>
+    <p>${story.content}</p>
+  `;
+  title.textContent = story.title;
+
+  // Update progress bars
+  const progressBars = document.querySelectorAll('.story-progress-bar-fill');
+  progressBars.forEach((bar, i) => {
+    bar.classList.remove('active');
+    bar.style.width = i < index ? '100%' : '0%';
+  });
+
+  if (progressBars[index]) {
+    progressBars[index].classList.add('active');
+  }
+
+  // Auto-advance timer
+  if (storyProgressTimer) {
+    clearTimeout(storyProgressTimer);
+  }
+
+  storyProgressTimer = setTimeout(() => {
+    if (index < stories.length - 1) {
+      showStory(index + 1);
+    } else {
+      closeStory();
+    }
+  }, 5000); // 5 seconds per story
+}
+
+function closeStory() {
+  const storyViewer = document.getElementById('storyViewer');
+  storyViewer.classList.remove('active');
+  document.body.style.overflow = '';
+
+  if (storyProgressTimer) {
+    clearTimeout(storyProgressTimer);
+    storyProgressTimer = null;
+  }
+}
+
+// Initialize story feed when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeStoryFeed);
+} else {
+  initializeStoryFeed();
+}
+
+// ===================================
 // Progress & Score Tracking System
 // ===================================
 

@@ -761,84 +761,664 @@
     }
 
     @media (max-width: 768px) {
-      .tutorial-container {
-        padding: 48px 20px 100px;
-        max-width: 100%;
+      /* Navigation */
+      .nav-content {
+        padding: 12px 20px;
+        flex-wrap: wrap;
       }
 
-      .tutorial-section {
-        margin-bottom: 72px;
+      .nav-content h1 {
+        font-size: 18px;
+        width: 100%;
+        order: -1;
+        margin-bottom: 8px;
+        text-align: center;
       }
 
-      .tutorial-section h2 {
-        font-size: 28px;
-        margin-bottom: 32px;
-      }
-
-      .tutorial-section h3 {
-        font-size: 20px;
-        margin-top: 40px;
-      }
-
-      .tutorial-section p, .tutorial-section li {
-        font-size: 15px;
-      }
-
-      .hero-intro {
-        padding: 32px 0 60px;
-      }
-
-      .hero-intro h1 {
-        font-size: 36px;
-        letter-spacing: -1px;
-      }
-
-      .hero-intro .subtitle {
-        font-size: 17px;
+      .nav-home {
+        font-size: 13px;
       }
 
       .nav-stats {
-        flex-direction: column;
-        gap: 8px;
-        align-items: flex-end;
+        flex-direction: row;
+        gap: 16px;
+        font-size: 12px;
       }
 
-      .floating-toc, .floating-ai {
-        width: 48px;
-        height: 48px;
+      .progress-indicator, .score-indicator {
+        font-size: 12px;
+      }
+
+      .progress-indicator i, .score-indicator i {
+        font-size: 12px;
+      }
+
+      /* Story Feed */
+      .story-feed-wrapper {
+        padding: 0 20px;
+      }
+
+      .story-feed-header h3 {
+        font-size: 14px;
+      }
+
+      .story-feed-header p {
+        font-size: 12px;
+      }
+
+      .story-item {
+        width: 100px;
+        height: 150px;
+      }
+
+      .story-item-icon {
+        font-size: 28px;
+        margin-bottom: 4px;
+      }
+
+      .story-item-title {
+        font-size: 10px;
+      }
+
+      .story-item-preview {
+        font-size: 8px;
+        -webkit-line-clamp: 2;
+      }
+
+      .story-feed-scroll {
+        gap: 12px;
+      }
+
+      /* Main Container */
+      .tutorial-container {
+        padding: 40px 20px 100px;
+        max-width: 100%;
+      }
+
+      /* Sections */
+      .tutorial-section {
+        margin-bottom: 64px;
+      }
+
+      .tutorial-section h2 {
+        font-size: 24px;
+        margin-bottom: 24px;
+        padding-left: 16px;
+      }
+
+      .tutorial-section h2::before {
+        width: 60px;
+      }
+
+      .tutorial-section h3 {
         font-size: 18px;
-        bottom: 24px;
+        margin-top: 32px;
+        margin-bottom: 16px;
       }
 
-      .floating-toc {
-        left: 20px;
+      .tutorial-section h4 {
+        font-size: 16px;
+        margin: 24px 0 12px;
       }
 
-      .floating-ai {
-        right: 20px;
+      .tutorial-section p, .tutorial-section li {
+        font-size: 14px;
+        line-height: 1.7;
       }
 
-      .toc-panel {
-        width: calc(100% - 48px);
-        left: 24px;
-        bottom: 84px;
+      .tutorial-section ul, .tutorial-section ol {
+        padding-left: 20px;
       }
 
-      .quiz-question, .descriptive-question, .viz-wrapper {
-        padding: 24px;
+      /* Hero Intro */
+      .hero-intro {
+        padding: 24px 0 48px;
       }
 
+      .hero-intro h1 {
+        font-size: 28px;
+        letter-spacing: -0.8px;
+        line-height: 1.3;
+      }
+
+      .hero-intro .subtitle {
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      /* Boxes */
       .key-idea, .definition-box, .formula-box {
-        padding: 24px;
-        margin: 32px 0;
+        padding: 20px;
+        margin: 24px 0;
+        font-size: 14px;
+      }
+
+      .formula-box h3 {
+        font-size: 18px;
+        margin-bottom: 16px;
+      }
+
+      .formula-item {
+        font-size: 14px;
+        padding: 12px 16px;
+      }
+
+      /* Visualization */
+      .viz-wrapper {
+        padding: 20px;
+        gap: 20px;
       }
 
       .viz-display-section {
         grid-template-columns: 1fr;
+        gap: 20px;
       }
 
       .viz-canvas {
-        height: 400px;
+        height: 350px;
+        padding: 20px;
+      }
+
+      .viz-canvas canvas {
+        width: calc(100% - 40px) !important;
+        height: calc(100% - 40px) !important;
+      }
+
+      .live-values {
+        margin-top: 12px;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .live-value-item {
+        font-size: 12px;
+      }
+
+      .live-label {
+        font-size: 12px;
+      }
+
+      .live-value {
+        font-size: 14px;
+      }
+
+      .live-unit {
+        font-size: 11px;
+      }
+
+      .control-group label {
+        font-size: 12px;
+      }
+
+      .control-group input {
+        font-size: 13px;
+        padding: 8px 10px;
+      }
+
+      .viz-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn-run, .btn-reset {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
+        font-size: 13px;
+      }
+
+      /* Quiz Sections */
+      #section-7, #section-8 {
+        padding: 32px 20px;
+        margin: 48px -20px 64px -20px;
+        border-radius: 12px;
+      }
+
+      .quiz-question, .descriptive-question {
+        padding: 20px;
+        margin: 24px 0;
+      }
+
+      .quiz-question h4, .descriptive-question h4 {
+        font-size: 15px;
+      }
+
+      .quiz-input, .descriptive-textarea {
+        font-size: 14px;
+        padding: 10px;
+      }
+
+      .quiz-options {
+        gap: 10px;
+      }
+
+      .quiz-option {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+
+      .btn-check, .btn-submit {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+
+      .quiz-feedback, .ai-feedback {
+        font-size: 13px;
+        padding: 12px;
+      }
+
+      .ai-score {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      .ai-feedback-text {
+        font-size: 13px;
+      }
+
+      /* Chat Section */
+      .chat-section {
+        margin-bottom: 64px;
+      }
+
+      .section-header {
+        margin-bottom: 20px;
+      }
+
+      .section-header h2 {
+        font-size: 24px;
+        padding-left: 16px;
+        margin-bottom: 8px;
+      }
+
+      .section-header p {
+        font-size: 13px;
+        padding-left: 20px;
+      }
+
+      .chat-viz-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        min-height: auto;
+        margin-top: 20px;
+      }
+
+      .chat-sidebar {
+        order: 2;
+        min-height: 400px;
+        max-height: 500px;
+      }
+
+      .chat-messages {
+        max-height: 280px;
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .message {
+        font-size: 13px;
+        padding: 10px 12px;
+        max-width: 90%;
+        border-radius: 10px;
+      }
+
+      .message.user {
+        border-bottom-right-radius: 3px;
+      }
+
+      .message.assistant {
+        border-bottom-left-radius: 3px;
+      }
+
+      .message p {
+        margin-bottom: 8px;
+        line-height: 1.5;
+      }
+
+      .message .hint {
+        font-size: 11px;
+        margin-top: 6px;
+        padding-top: 6px;
+      }
+
+      .typing-indicator {
+        padding: 10px 12px;
+      }
+
+      .typing-indicator span {
+        width: 6px;
+        height: 6px;
+      }
+
+      .chat-input-container {
+        padding: 10px;
+        gap: 8px;
+      }
+
+      #chatInput {
+        font-size: 14px;
+        padding: 10px 12px;
+        border-radius: 6px;
+      }
+
+      .btn-send {
+        padding: 10px 14px;
+        font-size: 14px;
+        border-radius: 6px;
+      }
+
+      .chat-viz-panel {
+        order: 1;
+        min-height: 350px;
+        height: auto;
+        border-radius: 10px;
+      }
+
+      .chat-viz-panel > div {
+        min-height: 350px;
+        height: 350px;
+      }
+
+      #chatVisualization {
+        height: 100%;
+        border-radius: 8px;
+      }
+
+      .viz-placeholder {
+        font-size: 13px;
+        padding: 20px;
+      }
+
+      .viz-placeholder i {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+
+      .viz-placeholder p {
+        font-size: 13px;
+      }
+
+      /* Chat Live Values */
+      #chatLiveValues {
+        margin-top: 10px;
+        gap: 16px;
+      }
+
+      /* Chat Controls */
+      .chat-viz-panel .speed-nav-controls {
+        top: 8px;
+        right: 8px;
+        gap: 4px;
+      }
+
+      .chat-viz-panel .speed-dropdown,
+      .chat-viz-panel .nav-btn,
+      .chat-viz-panel .anim-btn {
+        font-size: 11px;
+      }
+
+      .chat-viz-panel .nav-btn,
+      .chat-viz-panel .anim-btn {
+        width: 24px;
+        height: 24px;
+      }
+
+      /* Floating Buttons */
+      .floating-toc, .floating-ai {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+        bottom: 20px;
+      }
+
+      .floating-toc {
+        left: 16px;
+      }
+
+      .floating-ai {
+        right: 16px;
+      }
+
+      /* TOC Panel */
+      .toc-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        bottom: 80px;
+        max-height: 400px;
+      }
+
+      .toc-panel h3 {
+        font-size: 14px;
+      }
+
+      .toc-list a {
+        font-size: 13px;
+        padding: 6px 10px;
+      }
+
+      /* Story Viewer Modal */
+      .story-viewer-content {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+
+      .story-viewer-header {
+        padding: 12px;
+      }
+
+      .story-viewer-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+      }
+
+      .story-viewer-title {
+        font-size: 13px;
+      }
+
+      .story-viewer-close {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+      }
+
+      .story-viewer-background {
+        padding: 60px 24px 24px;
+      }
+
+      .story-viewer-text h2 {
+        font-size: 22px;
+        margin-bottom: 16px;
+      }
+
+      .story-viewer-text p {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* Footer */
+      .tutorial-footer {
+        padding: 32px 0 24px;
+        margin-top: 80px;
+      }
+
+      .footer-content {
+        padding: 0 20px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .footer-brand h3 {
+        font-size: 18px;
+      }
+
+      .footer-brand p {
+        font-size: 13px;
+      }
+
+      .footer-ai-info {
+        padding: 20px;
+      }
+
+      .footer-ai-info h4 {
+        font-size: 12px;
+      }
+
+      .footer-ai-info p {
+        font-size: 12px;
+      }
+
+      .footer-bottom {
+        font-size: 12px;
+        padding-top: 20px;
+      }
+    }
+
+    /* Small Mobile Devices (< 480px) */
+    @media (max-width: 480px) {
+      .nav-content {
+        padding: 10px 16px;
+      }
+
+      .nav-content h1 {
+        font-size: 16px;
+      }
+
+      .nav-stats {
+        gap: 12px;
+        font-size: 11px;
+      }
+
+      .story-feed-wrapper {
+        padding: 0 16px;
+      }
+
+      .story-item {
+        width: 90px;
+        height: 135px;
+      }
+
+      .story-item-icon {
+        font-size: 24px;
+      }
+
+      .tutorial-container {
+        padding: 32px 16px 80px;
+      }
+
+      .tutorial-section h2 {
+        font-size: 22px;
+        padding-left: 12px;
+      }
+
+      .hero-intro h1 {
+        font-size: 24px;
+      }
+
+      .hero-intro .subtitle {
+        font-size: 14px;
+      }
+
+      .viz-canvas {
+        height: 280px;
+        padding: 16px;
+      }
+
+      .viz-canvas canvas {
+        width: calc(100% - 32px) !important;
+        height: calc(100% - 32px) !important;
+      }
+
+      .live-values {
+        gap: 16px;
+      }
+
+      #section-7, #section-8 {
+        padding: 24px 16px;
+        margin: 40px -16px 56px -16px;
+      }
+
+      .section-header h2 {
+        font-size: 22px;
+      }
+
+      .section-header p {
+        font-size: 12px;
+      }
+
+      .chat-sidebar {
+        min-height: 350px;
+        max-height: 450px;
+      }
+
+      .chat-messages {
+        max-height: 240px;
+        padding: 10px;
+      }
+
+      .message {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+
+      .chat-input-container {
+        padding: 8px;
+      }
+
+      #chatInput {
+        font-size: 13px;
+        padding: 8px 10px;
+      }
+
+      .btn-send {
+        padding: 8px 12px;
+      }
+
+      .chat-viz-panel {
+        min-height: 300px;
+      }
+
+      .chat-viz-panel > div {
+        min-height: 300px;
+        height: 300px;
+      }
+    }
+
+    /* Landscape Mobile */
+    @media (max-width: 896px) and (orientation: landscape) {
+      .hero-intro {
+        padding: 20px 0 40px;
+      }
+
+      .hero-intro h1 {
+        font-size: 24px;
+      }
+
+      .tutorial-section {
+        margin-bottom: 48px;
+      }
+
+      .viz-canvas {
+        height: 280px;
+      }
+
+      .chat-sidebar {
+        height: 300px;
+      }
+
+      .chat-viz-panel {
+        height: 300px;
+      }
+
+      .story-viewer-content {
+        max-height: 100vh;
       }
     }
 
@@ -1212,6 +1792,346 @@
         gap: 32px;
       }
     }
+
+    /* Story Feed Section */
+    .story-feed-container {
+      background: #ffffff;
+      border-bottom: 1px solid #e8eaed;
+      padding: 20px 0;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    .story-feed-wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 40px;
+      position: relative;
+    }
+
+    .story-feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .story-feed-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0;
+      letter-spacing: -0.2px;
+    }
+
+    .story-feed-header p {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .story-feed-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-behavior: smooth;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #d1d5db #f3f4f6;
+    }
+
+    .story-feed-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .story-feed-scroll::-webkit-scrollbar-track {
+      background: #f3f4f6;
+      border-radius: 3px;
+    }
+
+    .story-feed-scroll::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 3px;
+    }
+
+    .story-feed-scroll::-webkit-scrollbar-thumb:hover {
+      background: #9ca3af;
+    }
+
+    .story-item {
+      flex: 0 0 auto;
+      width: 120px;
+      height: 180px;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .story-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .story-item.viewed .story-item-ring {
+      border-color: #d1d5db;
+    }
+
+    .story-item-ring {
+      position: absolute;
+      inset: -3px;
+      border: 3px solid;
+      border-radius: 12px;
+      border-image: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899) 1;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .story-item-background {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 12px;
+    }
+
+    .story-item-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .story-item-content {
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .story-item-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%);
+    }
+
+    .story-item-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.3;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+      margin-bottom: 4px;
+    }
+
+    .story-item-preview {
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.3;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Story Viewer Modal */
+    .story-viewer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story-viewer.active {
+      display: flex;
+    }
+
+    .story-viewer-content {
+      width: 100%;
+      max-width: 500px;
+      height: 90vh;
+      max-height: 800px;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    .story-viewer-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+      z-index: 10;
+    }
+
+    .story-progress-bars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .story-progress-bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .story-progress-bar-fill {
+      height: 100%;
+      background: #ffffff;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .story-progress-bar-fill.active {
+      animation: progressFill 5s linear forwards;
+    }
+
+    @keyframes progressFill {
+      to { width: 100%; }
+    }
+
+    .story-viewer-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .story-viewer-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .story-viewer-title {
+      flex: 1;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .story-viewer-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: background 0.2s;
+    }
+
+    .story-viewer-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .story-viewer-background {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px 40px;
+    }
+
+    .story-viewer-text {
+      text-align: center;
+      color: #fff;
+      max-width: 400px;
+    }
+
+    .story-viewer-text h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.3;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .story-viewer-text p {
+      font-size: 16px;
+      line-height: 1.6;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+      color: #f3f4f6;
+    }
+
+    .story-viewer-nav {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40%;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    .story-viewer-nav.prev {
+      left: 0;
+    }
+
+    .story-viewer-nav.next {
+      right: 0;
+    }
+
+    @media (max-width: 768px) {
+      .story-feed-wrapper {
+        padding: 0 20px;
+      }
+
+      .story-item {
+        width: 100px;
+        height: 150px;
+      }
+
+      .story-viewer-content {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+
+      .story-viewer-text h2 {
+        font-size: 24px;
+      }
+
+      .story-viewer-text p {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1237,6 +2157,183 @@
       <div class="progress-bar-fill" id="progressBarFill"></div>
     </div>
   </nav>
+
+  <!-- Story Feed -->
+  <div class="story-feed-container">
+    <div class="story-feed-wrapper">
+      <div class="story-feed-header">
+        <h3>Physics Facts & Stories</h3>
+      </div>
+      <div class="story-feed-scroll" id="storyFeedScroll">
+        <!-- Story 1: Speed of Light -->
+        <div class="story-item" data-story-id="0">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="story-item-icon">⚡</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Speed of Light</div>
+              <div class="story-item-preview">Light travels at 299,792,458 m/s - circle Earth 7.5 times in 1 second!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 2: Gravity -->
+        <div class="story-item" data-story-id="1">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="story-item-icon">🌍</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Gravity Mystery</div>
+              <div class="story-item-preview">Weakest fundamental force, yet dominates the universe!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 3: Quantum -->
+        <div class="story-item" data-story-id="2">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="story-item-icon">⚛️</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Quantum Leap</div>
+              <div class="story-item-preview">Electrons jump between levels instantly without traveling through space</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 4: Time Dilation -->
+        <div class="story-item" data-story-id="3">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <div class="story-item-icon">⏰</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Time Dilation</div>
+              <div class="story-item-preview">Astronauts age 0.007 seconds slower over 6 months in space!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 5: Black Holes -->
+        <div class="story-item" data-story-id="4">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            <div class="story-item-icon">🕳️</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Black Holes</div>
+              <div class="story-item-preview">Gravity so strong not even light can escape the event horizon</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 6: Newton's Apple -->
+        <div class="story-item" data-story-id="5">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+            <div class="story-item-icon">🍎</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Newton's Apple</div>
+              <div class="story-item-preview">The famous story is true! But it didn't hit his head</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 7: Sound Barrier -->
+        <div class="story-item" data-story-id="6">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+            <div class="story-item-icon">🔊</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Sound Barrier</div>
+              <div class="story-item-preview">Sound travels at 343 m/s - sonic boom is compressed air shock wave</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 8: Vacuum Power -->
+        <div class="story-item" data-story-id="7">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+            <div class="story-item-icon">🪶</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Vacuum Power</div>
+              <div class="story-item-preview">Feather and hammer fall at same speed! Proven on Moon 1971</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 9: Energy Cannot Die -->
+        <div class="story-item" data-story-id="8">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+            <div class="story-item-icon">✨</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Energy's Secret</div>
+              <div class="story-item-preview">Energy was once part of stars that exploded billions of years ago!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 10: Atoms -->
+        <div class="story-item" data-story-id="9">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%);">
+            <div class="story-item-icon">⚫</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Atomic Truth</div>
+              <div class="story-item-preview">Atoms are 99.9999999% empty space - mostly nothing!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 11: Terminal Velocity -->
+        <div class="story-item" data-story-id="10">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);">
+            <div class="story-item-icon">🪂</div>
+            <div class="story-item-overlay">
+              <div class="story-item-title">Terminal Speed</div>
+              <div class="story-item-preview">Humans fall at 195 km/h when air resistance equals gravity</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story 12: Commented Out - For Image/Video Support -->
+        <!--
+        <div class="story-item" data-story-id="11">
+          <div class="story-item-ring"></div>
+          <div class="story-item-background" style="background-image: url('path/to/image.jpg');">
+            <div class="story-item-overlay">
+              <div class="story-item-title">Custom Story</div>
+            </div>
+          </div>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Story Viewer Modal -->
+  <div class="story-viewer" id="storyViewer">
+    <div class="story-viewer-content">
+      <div class="story-viewer-header">
+        <div class="story-progress-bars" id="storyProgressBars"></div>
+        <div class="story-viewer-info">
+          <div class="story-viewer-avatar">⚛️</div>
+          <div class="story-viewer-title" id="storyViewerTitle">Physics Facts</div>
+          <button class="story-viewer-close" id="storyViewerClose">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="story-viewer-background" id="storyViewerBackground">
+        <div class="story-viewer-text" id="storyViewerText">
+          <!-- Story content will be loaded here -->
+        </div>
+      </div>
+      <div class="story-viewer-nav prev" id="storyNavPrev"></div>
+      <div class="story-viewer-nav next" id="storyNavNext"></div>
+    </div>
+  </div>
 
   <!-- Main Content -->
   <main class="tutorial-container">
