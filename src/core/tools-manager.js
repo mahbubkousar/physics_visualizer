@@ -3,17 +3,17 @@
  * Manages visualization tools with unified configuration and control
  */
 
-// Use global THREE and MathBox from CDN
-const THREE = window.THREE;
-const OrbitControls = window.THREE.OrbitControls;
-const MathBox = window.MathBox;
-
 export class ToolsManager {
   constructor(containerElement) {
     this.container = containerElement;
     this.currentTool = null;
     this.currentToolName = null;
     this.registeredTools = new Map();
+
+    // Get globals from window
+    this.THREE = window.THREE;
+    this.MathBox = window.MathBox;
+    this.OrbitControls = window.THREE?.OrbitControls;
 
     // Default configuration
     this.config = {
@@ -36,15 +36,15 @@ export class ToolsManager {
    * Initialize MathBox with Three.js
    */
   initializeMathBox() {
-    this.mathbox = MathBox.mathBox({
+    this.mathbox = this.MathBox.mathBox({
       plugins: ['core', 'controls', 'cursor'],
-      controls: { klass: OrbitControls },
+      controls: { klass: this.OrbitControls },
       element: this.container,
     });
 
     this.three = this.mathbox.three;
     this.three.renderer.setClearColor(
-      new THREE.Color(this.config.backgroundColor),
+      new this.THREE.Color(this.config.backgroundColor),
       1.0
     );
 
@@ -106,7 +106,7 @@ export class ToolsManager {
 
     if ('backgroundColor' in newConfig) {
       this.three.renderer.setClearColor(
-        new THREE.Color(newConfig.backgroundColor),
+        new this.THREE.Color(newConfig.backgroundColor),
         1.0
       );
     }
