@@ -518,9 +518,6 @@ Be fair but rigorous. Award points for:
         feedback: 'Error: No API key found. Please configure your Gemini API key to use AI evaluation.'
       };
     }
-
-    console.log('Creating Gemini evaluator...');
-
     // Use the same configuration as the chat section
     const apiEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
@@ -561,8 +558,6 @@ Be fair but rigorous. Award points for:
     }
 
     const data = await response.json();
-    console.log('Got API response:', data);
-
     if (!data.candidates || !data.candidates[0]) {
       throw new Error('Invalid API response: No candidates found');
     }
@@ -575,8 +570,6 @@ Be fair but rigorous. Award points for:
     }
 
     const responseText = candidate.content.parts[0].text;
-    console.log('Got response text:', responseText);
-
     // Parse the response
     const scoreMatch = responseText.match(/SCORE:\s*(\d+)\/10/i);
     const feedbackMatch = responseText.match(/FEEDBACK:\s*([\s\S]+)$/i);
@@ -727,23 +720,16 @@ if (document.readyState === 'loading') {
 }
 
 function initializeVisualizations() {
-  console.log('Initializing visualizations...');
-
   // Initialize Static Visualization
   const staticVizContainer = document.getElementById('staticViz');
   if (!staticVizContainer) {
     console.error('Static viz container not found');
     return;
   }
-
-  console.log('Static viz container found:', staticVizContainer);
-
   let staticToolsManager;
 
   try {
     staticToolsManager = new ToolsManager(staticVizContainer);
-    console.log('ToolsManager created');
-
     staticToolsManager.registerTool('projectile', Projectile, {
       config: {
         enableZoom: false,
@@ -751,23 +737,15 @@ function initializeVisualizations() {
         enablePan: false,
       }
     });
-    console.log('Projectile tool registered');
-
     staticToolsManager.switchTool('projectile');
-    console.log('Switched to projectile tool');
-
     // Set renderer size to match container
     const staticWidth = staticVizContainer.clientWidth;
     const staticHeight = staticVizContainer.clientHeight;
-    console.log('Container dimensions:', staticWidth, 'x', staticHeight);
-
     staticToolsManager.three.renderer.setSize(staticWidth, staticHeight);
     staticToolsManager.three.camera.aspect = staticWidth / staticHeight;
     staticToolsManager.three.camera.updateProjectionMatrix();
 
     staticToolsManager.startAnimation();
-    console.log('Animation started');
-
     // Hide the placeholder message
     const placeholder = document.getElementById('staticVizPlaceholder');
     if (placeholder) {
@@ -782,23 +760,14 @@ function initializeVisualizations() {
 
   // Static Visualization Button Handlers
   document.getElementById('btnRunStatic')?.addEventListener('click', () => {
-    console.log('Run button clicked');
-    console.log('staticToolsManager:', staticToolsManager);
-
     const v0 = parseFloat(document.getElementById('static-v0').value);
     const theta = parseFloat(document.getElementById('static-angle').value);
     const y0 = parseFloat(document.getElementById('static-y0').value);
 
     const colors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
     const color = colors[Math.floor(Math.random() * colors.length)];
-
-    console.log('Launching projectile:', { v0, theta, y0, color });
-
     try {
       staticToolsManager.executeToolMethod('launch', v0, theta, 0, y0, color);
-      console.log('Launch executed successfully');
-      console.log('Canvas in container:', staticVizContainer.querySelector('canvas'));
-
       // Show animation controls
       document.getElementById('staticAnimationControls').style.display = 'flex';
       const staticPlayPauseBtn = document.getElementById('staticPlayPauseBtn');
@@ -932,8 +901,6 @@ function initializeVisualizations() {
   document.getElementById('btnRunExample1')?.addEventListener('click', () => {
     const colors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
     const color = colors[Math.floor(Math.random() * colors.length)];
-
-    console.log('Launching example cannonball');
     // Parameters from example: v0=100 m/s, angle=30°, y0=0
     example1ToolsManager.executeToolMethod('launch', 100, 30, 0, 0, color);
 
@@ -1151,8 +1118,6 @@ function initializeVisualizations() {
       });
 
       window.chatController = chatController;
-
-      console.log('Chat system initialized');
     } catch (error) {
       console.error('Failed to initialize chat:', error);
 
@@ -1211,8 +1176,6 @@ function initializeVisualizations() {
       sendMessage();
     }
   });
-
-  console.log('Chat playground initialized');
 }
 
 // ===================================
@@ -1425,12 +1388,6 @@ window.showFinishedControls = () => {
 // ===================================
 // Initialize
 // ===================================
-
-console.log('Tutorial functionality loaded');
-console.log('Progress tracking: Active');
-console.log('Score tracking: Active');
-console.log('Sections:', totalSections);
-
 // Close TOC when clicking outside
 document.addEventListener('click', (e) => {
   const tocPanel = document.getElementById('tocPanel');

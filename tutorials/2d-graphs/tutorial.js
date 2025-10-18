@@ -530,9 +530,6 @@ Be fair but rigorous. Award points for:
         feedback: 'Error: No API key found. Please configure your Gemini API key to use AI evaluation.'
       };
     }
-
-    console.log('Creating Gemini evaluator...');
-
     // Use the same configuration as the chat section
     const apiEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
@@ -573,8 +570,6 @@ Be fair but rigorous. Award points for:
     }
 
     const data = await response.json();
-    console.log('Got API response:', data);
-
     if (!data.candidates || !data.candidates[0]) {
       throw new Error('Invalid API response: No candidates found');
     }
@@ -587,8 +582,6 @@ Be fair but rigorous. Award points for:
     }
 
     const responseText = candidate.content.parts[0].text;
-    console.log('Got response text:', responseText);
-
     // Parse the response
     const scoreMatch = responseText.match(/SCORE:\s*(\d+)\/10/i);
     const feedbackMatch = responseText.match(/FEEDBACK:\s*([\s\S]+)$/i);
@@ -739,23 +732,16 @@ if (document.readyState === 'loading') {
 }
 
 function initializeVisualizations() {
-  console.log('Initializing visualizations...');
-
   // Initialize Point Visualization
   const pointVizContainer = document.getElementById('pointViz');
   if (!pointVizContainer) {
     console.error('Point viz container not found');
     return;
   }
-
-  console.log('Point viz container found:', pointVizContainer);
-
   let pointToolsManager;
 
   try {
     pointToolsManager = new ToolsManager(pointVizContainer);
-    console.log('ToolsManager created');
-
     pointToolsManager.registerTool('2dgraph', Graph2D, {
       config: {
         enableZoom: false,
@@ -763,23 +749,15 @@ function initializeVisualizations() {
         enablePan: false,
       }
     });
-    console.log('Graph2D tool registered');
-
     pointToolsManager.switchTool('2dgraph');
-    console.log('Switched to 2dgraph tool');
-
     // Set renderer size to match container
     const pointWidth = pointVizContainer.clientWidth;
     const pointHeight = pointVizContainer.clientHeight;
-    console.log('Container dimensions:', pointWidth, 'x', pointHeight);
-
     pointToolsManager.three.renderer.setSize(pointWidth, pointHeight);
     pointToolsManager.three.camera.aspect = pointWidth / pointHeight;
     pointToolsManager.three.camera.updateProjectionMatrix();
 
     pointToolsManager.startAnimation();
-    console.log('Animation started');
-
     // Hide the placeholder message
     const placeholder = document.getElementById('pointVizPlaceholder');
     if (placeholder) {
@@ -794,22 +772,13 @@ function initializeVisualizations() {
 
   // Point Visualization Button Handlers
   document.getElementById('btnPlotPoint')?.addEventListener('click', () => {
-    console.log('Plot Point button clicked');
-    console.log('pointToolsManager:', pointToolsManager);
-
     const x = parseFloat(document.getElementById('point-x').value);
     const y = parseFloat(document.getElementById('point-y').value);
 
     const colors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
     const color = colors[Math.floor(Math.random() * colors.length)];
-
-    console.log('Plotting point:', { x, y, color });
-
     try {
       pointToolsManager.executeToolMethod('addPoint', x, y, color);
-      console.log('Point plotted successfully');
-      console.log('Canvas in container:', pointVizContainer.querySelector('canvas'));
-
       // Calculate distance from origin
       const distance = Math.sqrt(x * x + y * y).toFixed(2);
 
@@ -968,8 +937,6 @@ function initializeVisualizations() {
   document.getElementById('btnRunExample1')?.addEventListener('click', () => {
     const colors = [0xe74c3c, 0x3498db, 0x2ecc71, 0xf39c12, 0x9b59b6];
     const color = colors[Math.floor(Math.random() * colors.length)];
-
-    console.log('Plotting example point: (3, 4)');
     // Example: Plot point (3, 4)
     example1ToolsManager.executeToolMethod('addPoint', 3, 4, color);
 
@@ -1111,9 +1078,6 @@ function initializeVisualizations() {
       { x: -2, y: -3, color: colors[2] },
       { x: 2, y: -3, color: colors[3] }
     ];
-
-    console.log('Plotting comparison points:', points);
-
     // Plot each point with a slight delay for visual effect
     points.forEach((point, index) => {
       setTimeout(() => {
@@ -1336,8 +1300,6 @@ function initializeVisualizations() {
       });
 
       window.chatController = chatController;
-
-      console.log('Chat system initialized');
     } catch (error) {
       console.error('Failed to initialize chat:', error);
 
@@ -1396,8 +1358,6 @@ function initializeVisualizations() {
       sendMessage();
     }
   });
-
-  console.log('Chat playground initialized');
   } // End of chat visualization
 }
 
@@ -1611,11 +1571,6 @@ window.showFinishedControls = () => {
 // ===================================
 // Initialize
 // ===================================
-
-console.log('Tutorial functionality loaded');
-console.log('Progress tracking: Active');
-console.log('Score tracking: Active');
-console.log('Sections:', totalSections);
 
 // Close TOC when clicking outside
 document.addEventListener('click', (e) => {
