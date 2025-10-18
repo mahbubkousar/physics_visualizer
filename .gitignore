@@ -15,9 +15,6 @@ build/
 .env.local
 .env.*.local
 
-# Configuration with API keys
-config.js
-
 # IDE
 .vscode/
 .idea/
