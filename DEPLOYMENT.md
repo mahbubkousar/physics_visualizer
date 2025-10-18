@@ -43,17 +43,22 @@ npm-debug.log*
 
 ### 1.2 Secure Your API Key
 
-**IMPORTANT**: Never commit your Gemini API key to a public repository!
+**IMPORTANT**: The `config.js` file is included in the repository with an empty API key for security.
 
-1. Open `config.js`
-2. Replace your actual API key with an empty string:
+1. The `config.js` file should contain:
    ```javascript
    export const config = {
      GEMINI_API_KEY: '' // Leave this empty for production
    };
    ```
 
-3. Your users will need to add their own API keys. The tutorials will show a message prompting them to configure their key.
+2. **DO NOT add .gitignore for config.js** - The file must be committed to the repository (with empty API key) so it deploys to Netlify.
+
+3. For local development with your own API key:
+   - Use browser localStorage: `localStorage.setItem('GEMINI_API_KEY', 'your-key')`
+   - Or create a `.env` file (this is gitignored)
+
+4. Your users will add their own API keys via localStorage. The tutorials will show a message prompting them to configure their key.
 
 ---
 
@@ -346,6 +351,21 @@ grep -r "import.*from.*['\"].*[^.js]['\"]" tutorials/
 ```
 
 If any imports are missing `.js`, add them.
+
+### Issue: config.js Not Found (404 Error)
+
+**Symptoms**:
+- Browser console shows: `Failed to load resource: config.js 404`
+- No JavaScript works on the deployed site
+- Functions like `toggleTOC` are undefined
+
+**Root Cause**: `config.js` is in `.gitignore` and not deployed to Netlify
+
+**Solution**:
+1. Remove `config.js` from `.gitignore`
+2. Ensure `config.js` has empty API key: `GEMINI_API_KEY: ''`
+3. Add and commit: `git add config.js .gitignore`
+4. Push to GitHub: `git push`
 
 ### Issue: API Key Not Working
 
