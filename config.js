@@ -1,3 +1,3 @@
 export const config = {
-  GEMINI_API_KEY: '' // Users will add their own API key via localStorage
+  GEMINI_API_KEY: 'AIzaSyDv3HTGbv1taXi53c7MkYPS154GbIqNyCI'
 };
