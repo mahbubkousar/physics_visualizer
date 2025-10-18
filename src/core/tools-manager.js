@@ -3,9 +3,10 @@
  * Manages visualization tools with unified configuration and control
  */
 
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import * as MathBox from 'mathbox';
+// Use global THREE and MathBox from CDN
+const THREE = window.THREE;
+const OrbitControls = window.THREE.OrbitControls;
+const MathBox = window.MathBox;
 
 export class ToolsManager {
   constructor(containerElement) {
