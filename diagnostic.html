@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module Loading Diagnostic</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #00ff00;
+    }
+    .success { color: #00ff00; }
+    .error { color: #ff0000; }
+    .info { color: #00aaff; }
+    pre { background: #000; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>ES6 Module Loading Diagnostic</h1>
+  <div id="results"></div>
+
+  <script>
+    const results = document.getElementById('results');
+
+    function log(message, type = 'info') {
+      const div = document.createElement('div');
+      div.className = type;
+      div.textContent = message;
+      results.appendChild(div);
+      console.log(message);
+    }
+
+    // Test 1: Basic module support
+    log('Test 1: Checking ES6 module support...', 'info');
+    if ('noModule' in HTMLScriptElement.prototype) {
+      log('✓ Browser supports ES6 modules', 'success');
+    } else {
+      log('✗ Browser does not support ES6 modules', 'error');
+    }
+
+    // Test 2: Try to load config.js
+    log('\nTest 2: Loading config.js...', 'info');
+    import('/config.js')
+      .then(module => {
+        log('✓ config.js loaded successfully', 'success');
+        log(`  config.GEMINI_API_KEY = "${module.config.GEMINI_API_KEY}"`, 'info');
+      })
+      .catch(err => {
+        log('✗ Failed to load config.js', 'error');
+        log(`  Error: ${err.message}`, 'error');
+      });
+
+    // Test 3: Try to load tools-manager.js
+    log('\nTest 3: Loading tools-manager.js...', 'info');
+    import('/src/core/tools-manager.js')
+      .then(module => {
+        log('✓ tools-manager.js loaded successfully', 'success');
+        log(`  ToolsManager class: ${typeof module.ToolsManager}`, 'info');
+      })
+      .catch(err => {
+        log('✗ Failed to load tools-manager.js', 'error');
+        log(`  Error: ${err.message}`, 'error');
+      });
+
+    // Test 4: Try to load tutorial.js
+    log('\nTest 4: Loading tutorial.js from projectile-motion...', 'info');
+    import('/tutorials/projectile-motion/tutorial.js')
+      .then(module => {
+        log('✓ tutorial.js loaded successfully', 'success');
+      })
+      .catch(err => {
+        log('✗ Failed to load tutorial.js', 'error');
+        log(`  Error: ${err.message}`, 'error');
+      });
+
+    // Log all console errors
+    window.addEventListener('error', (e) => {
+      log(`\n✗ Runtime Error: ${e.message}`, 'error');
+      log(`  File: ${e.filename}:${e.lineno}:${e.colno}`, 'error');
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      log(`\n✗ Unhandled Promise Rejection: ${e.reason}`, 'error');
+    });
+  </script>
+</body>
+</html>
