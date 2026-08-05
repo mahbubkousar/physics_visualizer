@@ -10,6 +10,7 @@ Interactive physics education platform with AI-powered visualizations.
 - **AI Tutoring** - Gemini-powered chat for personalized explanations
 - **Structured Tutorials** - Theory, examples, quizzes, and practice problems
 - **Extensible Architecture** - Easy to add new physics tools and tutorials
+- **Responsive Loading** - Visualization code loads only when an interactive section approaches the viewport
 
 ## Quick Start
 
@@ -75,6 +76,10 @@ visualization/
 
 The site auto-deploys to Netlify on every push to `master`. Configuration:
 - `netlify.toml` - Build settings and the browser security policy
+
+The production build enforces a 100 KiB initial-JavaScript budget per page.
+Large Three.js and MathBox chunks are loaded on demand, and offscreen canvases
+pause rendering to avoid unnecessary CPU and battery use.
 
 ## Security
 

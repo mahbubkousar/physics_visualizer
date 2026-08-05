@@ -8,6 +8,7 @@ import { Graph2D } from '../../src/tools/2dgraph.js';
 import { ChatController } from '../../src/core/chat-controller.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
 import { formatSafeFeedback } from '../../src/core/safe-html.js';
+import { whenNearViewport } from '../../src/core/lazy-visualization.js';
 
 // ===================================
 // Story Feed System
@@ -555,22 +556,23 @@ async function evaluateDescriptiveQuestion2() {
 
 // Wait for DOM to be ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeVisualizations);
+  document.addEventListener('DOMContentLoaded', () => void initializeVisualizations());
 } else {
-  initializeVisualizations();
+  void initializeVisualizations();
 }
 
-function initializeVisualizations() {
+async function initializeVisualizations() {
   // Initialize Static Visualization
   const staticVizContainer = document.getElementById('staticViz');
   if (!staticVizContainer) {
     console.error('Static viz container not found');
     return;
   }
+  await whenNearViewport(staticVizContainer);
   let staticToolsManager;
 
   try {
-    staticToolsManager = new ToolsManager(staticVizContainer);
+    staticToolsManager = await ToolsManager.create(staticVizContainer);
     staticToolsManager.registerTool('projectile', Projectile, {
       config: {
         enableZoom: false,
@@ -610,7 +612,7 @@ function initializeVisualizations() {
     try {
       staticToolsManager.executeToolMethod('launch', v0, theta, 0, y0, color);
       // Show animation controls
-      document.getElementById('staticAnimationControls').style.display = 'flex';
+      document.getElementById('staticSpeedNavControls').style.display = 'flex';
       const staticPlayPauseBtn = document.getElementById('staticPlayPauseBtn');
       const staticReplayBtn = document.getElementById('staticReplayBtn');
       if (staticPlayPauseBtn) staticPlayPauseBtn.style.display = 'flex';
@@ -626,7 +628,7 @@ function initializeVisualizations() {
     document.getElementById('static-angle').value = 45;
     document.getElementById('static-y0').value = 0;
     // Hide animation controls and live values
-    document.getElementById('staticAnimationControls').style.display = 'none';
+    document.getElementById('staticSpeedNavControls').style.display = 'none';
     document.getElementById('staticLiveValues').style.display = 'none';
   });
 
@@ -709,7 +711,7 @@ function initializeVisualizations() {
     return;
   }
 
-  const example1ToolsManager = new ToolsManager(example1VizContainer);
+  const example1ToolsManager = await ToolsManager.create(example1VizContainer);
 
   example1ToolsManager.registerTool('projectile', Projectile, {
     config: {
@@ -746,7 +748,7 @@ function initializeVisualizations() {
     example1ToolsManager.executeToolMethod('launch', 100, 30, 0, 0, color);
 
     // Show animation controls
-    document.getElementById('example1AnimationControls').style.display = 'flex';
+    document.getElementById('example1SpeedNavControls').style.display = 'flex';
     const example1PlayPauseBtn = document.getElementById('example1PlayPauseBtn');
     const example1ReplayBtn = document.getElementById('example1ReplayBtn');
     if (example1PlayPauseBtn) example1PlayPauseBtn.style.display = 'flex';
@@ -756,7 +758,7 @@ function initializeVisualizations() {
   document.getElementById('btnResetExample1')?.addEventListener('click', () => {
     example1ToolsManager.resetCurrentTool();
     // Hide animation controls and live values
-    document.getElementById('example1AnimationControls').style.display = 'none';
+    document.getElementById('example1SpeedNavControls').style.display = 'none';
     document.getElementById('example1LiveValues').style.display = 'none';
   });
 
@@ -843,7 +845,7 @@ function initializeVisualizations() {
     return;
   }
 
-  const chatToolsManager = new ToolsManager(chatVizContainer);
+  const chatToolsManager = await ToolsManager.create(chatVizContainer);
 
   // Register tools for chat
   chatToolsManager.registerTool('projectile', Projectile, {
@@ -1091,7 +1093,7 @@ window.hideLiveValues = () => {
 // Global helper functions that tools can call
 window.showControls = () => {
   // Static visualization controls
-  const staticControls = document.getElementById('staticAnimationControls');
+  const staticControls = document.getElementById('staticSpeedNavControls');
   const staticPlayPause = document.getElementById('staticPlayPauseBtn');
   const staticReplay = document.getElementById('staticReplayBtn');
 
@@ -1100,7 +1102,7 @@ window.showControls = () => {
   if (staticReplay) staticReplay.style.display = 'none';
 
   // Example1 visualization controls
-  const example1Controls = document.getElementById('example1AnimationControls');
+  const example1Controls = document.getElementById('example1SpeedNavControls');
   const example1PlayPause = document.getElementById('example1PlayPauseBtn');
   const example1Replay = document.getElementById('example1ReplayBtn');
 
@@ -1133,7 +1135,7 @@ window.showControls = () => {
 
 window.showFinishedControls = () => {
   // Static visualization controls
-  const staticControls = document.getElementById('staticAnimationControls');
+  const staticControls = document.getElementById('staticSpeedNavControls');
   const staticPlayPause = document.getElementById('staticPlayPauseBtn');
   const staticReplay = document.getElementById('staticReplayBtn');
 
@@ -1142,7 +1144,7 @@ window.showFinishedControls = () => {
   if (staticReplay) staticReplay.style.display = 'flex';
 
   // Example1 visualization controls
-  const example1Controls = document.getElementById('example1AnimationControls');
+  const example1Controls = document.getElementById('example1SpeedNavControls');
   const example1PlayPause = document.getElementById('example1PlayPauseBtn');
   const example1Replay = document.getElementById('example1ReplayBtn');
 

@@ -8,6 +8,7 @@ import { Graph2D } from '../../src/tools/2dgraph.js';
 import { ChatController } from '../../src/core/chat-controller.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
 import { formatSafeFeedback } from '../../src/core/safe-html.js';
+import { whenNearViewport } from '../../src/core/lazy-visualization.js';
 
 // ===================================
 // Story Feed System
@@ -567,22 +568,23 @@ async function evaluateDescriptiveQuestion2() {
 
 // Wait for DOM to be ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeVisualizations);
+  document.addEventListener('DOMContentLoaded', () => void initializeVisualizations());
 } else {
-  initializeVisualizations();
+  void initializeVisualizations();
 }
 
-function initializeVisualizations() {
+async function initializeVisualizations() {
   // Initialize Point Visualization
   const pointVizContainer = document.getElementById('pointViz');
   if (!pointVizContainer) {
     console.error('Point viz container not found');
     return;
   }
+  await whenNearViewport(pointVizContainer);
   let pointToolsManager;
 
   try {
-    pointToolsManager = new ToolsManager(pointVizContainer);
+    pointToolsManager = await ToolsManager.create(pointVizContainer);
     pointToolsManager.registerTool('2dgraph', Graph2D, {
       config: {
         enableZoom: false,
@@ -646,7 +648,7 @@ function initializeVisualizations() {
       }
 
       // Show animation controls
-      document.getElementById('pointAnimationControls').style.display = 'flex';
+      document.getElementById('pointSpeedNavControls').style.display = 'flex';
       const pointPlayPauseBtn = document.getElementById('pointPlayPauseBtn');
       const pointReplayBtn = document.getElementById('pointReplayBtn');
       if (pointPlayPauseBtn) pointPlayPauseBtn.style.display = 'flex';
@@ -661,7 +663,7 @@ function initializeVisualizations() {
     document.getElementById('point-x').value = 3;
     document.getElementById('point-y').value = 4;
     // Hide animation controls, live values, and point info
-    document.getElementById('pointAnimationControls').style.display = 'none';
+    document.getElementById('pointSpeedNavControls').style.display = 'none';
     document.getElementById('pointLiveValues').style.display = 'none';
     const infoDisplay = document.getElementById('pointInfo');
     if (infoDisplay) infoDisplay.style.display = 'none';
@@ -745,7 +747,7 @@ function initializeVisualizations() {
     console.error('Example1 viz container not found');
   } else {
 
-  const example1ToolsManager = new ToolsManager(example1VizContainer);
+  const example1ToolsManager = await ToolsManager.create(example1VizContainer);
 
   example1ToolsManager.registerTool('2dgraph', Graph2D, {
     config: {
@@ -879,7 +881,7 @@ function initializeVisualizations() {
     console.error('Comparison viz container not found');
   } else {
 
-  const comparisonToolsManager = new ToolsManager(comparisonVizContainer);
+  const comparisonToolsManager = await ToolsManager.create(comparisonVizContainer);
 
   comparisonToolsManager.registerTool('2dgraph', Graph2D, {
     config: {
@@ -1025,7 +1027,7 @@ function initializeVisualizations() {
     console.error('Chat viz container not found');
   } else {
 
-  const chatToolsManager = new ToolsManager(chatVizContainer);
+  const chatToolsManager = await ToolsManager.create(chatVizContainer);
 
   // Register tools for chat
   chatToolsManager.registerTool('projectile', Projectile, {
@@ -1274,7 +1276,7 @@ window.hideLiveValues = () => {
 // Global helper functions that tools can call
 window.showControls = () => {
   // Point visualization controls
-  const pointControls = document.getElementById('pointAnimationControls');
+  const pointControls = document.getElementById('pointSpeedNavControls');
   const pointPlayPause = document.getElementById('pointPlayPauseBtn');
   const pointReplay = document.getElementById('pointReplayBtn');
 
@@ -1316,7 +1318,7 @@ window.showControls = () => {
 
 window.showFinishedControls = () => {
   // Point visualization controls
-  const pointControls = document.getElementById('pointAnimationControls');
+  const pointControls = document.getElementById('pointSpeedNavControls');
   const pointPlayPause = document.getElementById('pointPlayPauseBtn');
   const pointReplay = document.getElementById('pointReplayBtn');
 

@@ -5,7 +5,7 @@ import { ChatController } from '../../src/core/chat-controller.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
 
 const vizContainer = document.getElementById('visualization');
-const toolsManager = new ToolsManager(vizContainer);
+const toolsManager = await ToolsManager.create(vizContainer);
 
 toolsManager.registerTool('projectile', Projectile, {
   config: {
@@ -198,7 +198,7 @@ if (nextBtn) {
 
 // Initialize separate tools manager for chat visualization
 const chatVizContainer = document.getElementById('chatVisualization');
-const chatToolsManager = new ToolsManager(chatVizContainer);
+const chatToolsManager = await ToolsManager.create(chatVizContainer);
 
 // Register tools for chat
 chatToolsManager.registerTool('projectile', Projectile, {

@@ -3,17 +3,34 @@
  * Manages visualization tools with unified configuration and control
  */
 
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import * as MathBox from 'mathbox';
-import 'mathbox/mathbox.css';
+let dependenciesPromise;
+
+function loadVisualizationDependencies() {
+  if (!dependenciesPromise) {
+    dependenciesPromise = Promise.all([
+      import('three'),
+      import('three/examples/jsm/controls/OrbitControls.js'),
+      import('mathbox'),
+      import('mathbox/mathbox.css')
+    ]).then(([THREE, { OrbitControls }, MathBox]) => ({ THREE, OrbitControls, MathBox }));
+  }
+
+  return dependenciesPromise;
+}
 
 export class ToolsManager {
-  constructor(containerElement) {
+  static async create(containerElement) {
+    const dependencies = await loadVisualizationDependencies();
+    return new ToolsManager(containerElement, dependencies);
+  }
+
+  constructor(containerElement, { THREE, MathBox, OrbitControls }) {
     this.container = containerElement;
     this.currentTool = null;
     this.currentToolName = null;
     this.registeredTools = new Map();
+    this.animationFrameId = null;
+    this.isVisible = true;
 
     // Dependencies are bundled from the lockfile instead of executed from CDNs.
     this.THREE = THREE;
@@ -35,6 +52,16 @@ export class ToolsManager {
     };
 
     this.initializeMathBox();
+    this.observeVisibility();
+  }
+
+  observeVisibility() {
+    if (typeof IntersectionObserver !== 'function') return;
+
+    this.visibilityObserver = new IntersectionObserver(entries => {
+      this.isVisible = entries[0]?.isIntersecting ?? true;
+    });
+    this.visibilityObserver.observe(this.container);
   }
 
   /**
@@ -231,9 +258,13 @@ export class ToolsManager {
    * Start animation loop
    */
   startAnimation() {
+    if (this.animationFrameId !== null) return;
+
     const animate = () => {
-      requestAnimationFrame(animate);
-      this.three.renderer.render(this.three.scene, this.three.camera);
+      this.animationFrameId = requestAnimationFrame(animate);
+      if (this.isVisible && !document.hidden) {
+        this.three.renderer.render(this.three.scene, this.three.camera);
+      }
     };
     animate();
   }
@@ -256,6 +287,11 @@ export class ToolsManager {
    * Destroy the manager and clean up resources
    */
   destroy() {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+    this.visibilityObserver?.disconnect();
     if (this.currentTool && this.currentTool.destroy) {
       this.currentTool.destroy();
     }
