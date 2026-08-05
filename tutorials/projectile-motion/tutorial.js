@@ -9,6 +9,10 @@ import { ChatController } from '../../src/core/chat-controller.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
 import { formatSafeFeedback } from '../../src/core/safe-html.js';
 import { whenNearViewport } from '../../src/core/lazy-visualization.js';
+import { enhanceAccessibility, prefersReducedMotion } from '../../src/core/accessibility.js';
+
+enhanceAccessibility();
+const reduceMotion = prefersReducedMotion();
 
 // ===================================
 // Story Feed System
@@ -75,6 +79,7 @@ const stories = [
 let currentStoryIndex = 0;
 let storyProgressTimer = null;
 let viewedStories = new Set();
+let activeStoryTrigger = null;
 
 function initializeStoryFeed() {
   const storyItems = document.querySelectorAll('.story-item');
@@ -86,7 +91,14 @@ function initializeStoryFeed() {
   // Add click handlers to story items
   storyItems.forEach((item, index) => {
     item.addEventListener('click', () => {
+      activeStoryTrigger = item;
       openStory(index);
+    });
+    item.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        item.click();
+      }
     });
   });
 
@@ -108,10 +120,31 @@ function initializeStoryFeed() {
     }
   });
 
+  for (const control of [storyNavPrev, storyNavNext]) {
+    control.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        control.click();
+      }
+    });
+  }
+
   // Close on escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && storyViewer.classList.contains('active')) {
       closeStory();
+    }
+    if (e.key === 'Tab' && storyViewer.classList.contains('active')) {
+      const controls = [storyViewerClose, storyNavPrev, storyNavNext];
+      const first = controls[0];
+      const last = controls.at(-1);
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
   });
 
@@ -127,7 +160,9 @@ function openStory(index) {
   currentStoryIndex = index;
   const storyViewer = document.getElementById('storyViewer');
   storyViewer.classList.add('active');
+  storyViewer.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  document.getElementById('storyViewerClose')?.focus();
 
   // Create progress bars
   const progressBars = document.getElementById('storyProgressBars');
@@ -183,24 +218,28 @@ function showStory(index) {
     clearTimeout(storyProgressTimer);
   }
 
-  storyProgressTimer = setTimeout(() => {
-    if (index < stories.length - 1) {
-      showStory(index + 1);
-    } else {
-      closeStory();
-    }
-  }, 5000); // 5 seconds per story
+  if (!reduceMotion) {
+    storyProgressTimer = setTimeout(() => {
+      if (index < stories.length - 1) {
+        showStory(index + 1);
+      } else {
+        closeStory();
+      }
+    }, 5000); // 5 seconds per story
+  }
 }
 
 function closeStory() {
   const storyViewer = document.getElementById('storyViewer');
   storyViewer.classList.remove('active');
+  storyViewer.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
 
   if (storyProgressTimer) {
     clearTimeout(storyProgressTimer);
     storyProgressTimer = null;
   }
+  activeStoryTrigger?.focus();
 }
 
 // Initialize story feed when DOM is ready
@@ -275,12 +314,13 @@ setTimeout(updateProgress, 500);
 function toggleTOC() {
   const panel = document.getElementById('tocPanel');
   panel.classList.toggle('active');
+  document.getElementById('btnTOC')?.setAttribute('aria-expanded', String(panel.classList.contains('active')));
 }
 
 function scrollToSection(sectionNum) {
   const section = document.getElementById(`section-${sectionNum}`);
   if (section) {
-    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    section.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     toggleTOC();
   }
 }
@@ -313,7 +353,7 @@ window.addEventListener('scroll', updateTOCHighlight);
 function scrollToChat() {
   const chatSection = document.getElementById('section-9');
   if (chatSection) {
-    chatSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    chatSection.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   }
 }
 
@@ -1209,5 +1249,6 @@ document.addEventListener('click', (e) => {
 
   if (tocPanel.classList.contains('active') && !tocPanel.contains(e.target) && !tocBtn.contains(e.target)) {
     tocPanel.classList.remove('active');
+    tocBtn.setAttribute('aria-expanded', 'false');
   }
 });

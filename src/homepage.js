@@ -1,3 +1,7 @@
+import { enhanceAccessibility } from './core/accessibility.js';
+
+enhanceAccessibility();
+
 const searchInput = document.getElementById('searchInput');
 const courseCards = document.querySelectorAll('.course-card');
 

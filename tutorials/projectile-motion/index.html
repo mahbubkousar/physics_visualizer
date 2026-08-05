@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0"
         crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="/css/accessibility.css">
 
   <script src="/mathjax-config.js"></script>
   <!-- MathJax remains remote but is pinned and integrity-checked. -->
@@ -2125,6 +2126,7 @@
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <!-- Navigation -->
   <nav class="tutorial-nav">
     <div class="nav-content">
@@ -2303,7 +2305,7 @@
   </div>
 
   <!-- Story Viewer Modal -->
-  <div class="story-viewer" id="storyViewer">
+  <div class="story-viewer" id="storyViewer" role="dialog" aria-modal="true" aria-labelledby="storyViewerTitle" aria-hidden="true">
     <div class="story-viewer-content">
       <div class="story-viewer-header">
         <div class="story-progress-bars" id="storyProgressBars"></div>
@@ -2326,7 +2328,7 @@
   </div>
 
   <!-- Main Content -->
-  <main class="tutorial-container">
+  <main class="tutorial-container" id="main-content">
     <!-- Hero Introduction -->
     <section class="hero-intro">
       <h1>Projectile Motion: The Art of Throwing Things</h1>

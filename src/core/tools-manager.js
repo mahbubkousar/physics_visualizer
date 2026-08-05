@@ -75,6 +75,11 @@ export class ToolsManager {
     });
 
     this.three = this.mathbox.three;
+    this.three.renderer.domElement.setAttribute('role', 'img');
+    this.three.renderer.domElement.setAttribute(
+      'aria-label',
+      'Interactive visualization; numeric values are shown in the adjacent controls'
+    );
     this.three.renderer.setClearColor(
       new this.THREE.Color(this.config.backgroundColor),
       1.0

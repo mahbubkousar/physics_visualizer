@@ -11,6 +11,7 @@ Interactive physics education platform with AI-powered visualizations.
 - **Structured Tutorials** - Theory, examples, quizzes, and practice problems
 - **Extensible Architecture** - Easy to add new physics tools and tutorials
 - **Responsive Loading** - Visualization code loads only when an interactive section approaches the viewport
+- **Accessible Interaction** - Keyboard navigation, screen-reader announcements, visible focus, and reduced-motion support
 
 ## Quick Start
 
