@@ -25,23 +25,20 @@ open http://localhost:8080
 
 ### Configuration
 
-The API key is already configured in `config.js` for the deployed site. For local development with a different key, edit:
+The visualization features run without credentials. AI features must call Gemini
+through a server-side proxy; never put an API key in `config.js`, browser code,
+`localStorage`, or a `VITE_` environment variable. Server-side development secrets
+belong in an ignored `.env` file based on `.env.example`.
 
-```javascript
-// config.js
-export const config = {
-  GEMINI_API_KEY: 'your-api-key-here'
-};
-```
-
-Get your API key: [Google AI Studio](https://aistudio.google.com/app/apikey)
+Until the server-side proxy is configured, the AI chat and answer-evaluation
+features remain unavailable.
 
 ## Project Structure
 
 ```
 visualization/
 ├── index.html              # Homepage
-├── config.js               # Configuration
+├── config.js               # Public, non-secret browser configuration
 ├── src/
 │   ├── core/               # Core systems (ToolsManager, Chat, AI)
 │   └── tools/              # Visualization tools (Projectile, Graph2D)
