@@ -16,11 +16,11 @@ Interactive physics education platform with AI-powered visualizations.
 ### Local Development
 
 ```bash
-# Static visualizations only
-python3 -m http.server 8080
+# Install the exact locked dependencies
+npm install
 
-# Open browser
-open http://localhost:8080
+# Run the Vite development server
+npm run dev
 ```
 
 To run AI features locally, create an ignored `.env` from `.env.example`, set a
@@ -66,7 +66,7 @@ visualization/
 
 ## Technology Stack
 
-- **Visualization:** Three.js r137, MathBox
+- **Visualization:** Three.js r139, MathBox 2.3.1
 - **AI:** Google Gemini 2.5 Flash
 - **Deployment:** Netlify
 - **Math Rendering:** MathJax

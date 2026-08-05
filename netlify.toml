@@ -66,8 +66,8 @@
 
 # Build settings
 [build]
-  publish = "."
-  command = ""
+  publish = "dist"
+  command = "npm run build"
 
 # Don't process or bundle files - skip ALL processing
 [build.processing]

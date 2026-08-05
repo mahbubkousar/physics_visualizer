@@ -3,6 +3,11 @@
  * Manages visualization tools with unified configuration and control
  */
 
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import * as MathBox from 'mathbox';
+import 'mathbox/mathbox.css';
+
 export class ToolsManager {
   constructor(containerElement) {
     this.container = containerElement;
@@ -10,10 +15,10 @@ export class ToolsManager {
     this.currentToolName = null;
     this.registeredTools = new Map();
 
-    // Get globals from window
-    this.THREE = window.THREE;
-    this.MathBox = window.MathBox;
-    this.OrbitControls = window.THREE?.OrbitControls;
+    // Dependencies are bundled from the lockfile instead of executed from CDNs.
+    this.THREE = THREE;
+    this.MathBox = MathBox;
+    this.OrbitControls = OrbitControls;
 
     // Default configuration
     this.config = {
