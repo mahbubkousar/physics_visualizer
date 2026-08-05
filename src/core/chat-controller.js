@@ -9,7 +9,7 @@ import { parseAIResponse, formatTextForDisplay, validateCommand } from './messag
 import { toolRegistry } from './tool-registry.js';
 
 export class ChatController {
-  constructor(apiKey, options = {}) {
+  constructor(options = {}) {
     console.log('ChatController: Initializing...');
 
     // Support custom element IDs for flexible integration
@@ -44,11 +44,8 @@ export class ChatController {
       toolRegistry.setToolsManager(this.toolsManager);
     }
 
-    // Initialize Gemini chat with system prompt from tool registry
-    const systemPrompt = toolRegistry.generatePromptText();
-    console.log('ChatController: System prompt generated:', systemPrompt.substring(0, 100) + '...');
-
-    this.geminiChat = new GeminiChat(apiKey, systemPrompt);
+    // Provider credentials and the authoritative prompt stay server-side.
+    this.geminiChat = new GeminiChat();
     console.log('ChatController: Gemini chat initialized');
 
     // Prevent duplicate requests
@@ -79,8 +76,6 @@ export class ChatController {
 
   async handleSendMessage() {
     const message = this.inputField.value.trim();
-    console.log('handleSendMessage: Message:', message);
-
     if (!message) return;
 
     // Prevent duplicate requests if already processing
@@ -108,11 +103,8 @@ export class ChatController {
       console.log('handleSendMessage: Sending to Gemini...');
       // Get response from Gemini
       const response = await this.geminiChat.sendMessage(message);
-      console.log('handleSendMessage: Got response:', response.substring(0, 100) + '...');
-
       // Parse response for text and visualization commands
       const parsed = parseAIResponse(response);
-      console.log('handleSendMessage: Parsed:', parsed);
 
       // Hide typing indicator
       this.showTypingIndicator(false);

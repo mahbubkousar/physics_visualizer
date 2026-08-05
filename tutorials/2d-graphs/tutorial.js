@@ -6,9 +6,7 @@ import { ToolsManager } from '../../src/core/tools-manager.js';
 import { Projectile } from '../../src/tools/projectile.js';
 import { Graph2D } from '../../src/tools/2dgraph.js';
 import { ChatController } from '../../src/core/chat-controller.js';
-import { GeminiChat } from '../../src/core/gemini-api.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
-import { config } from '../../config.js';
 
 // ===================================
 // Story Feed System
@@ -488,130 +486,36 @@ const QUESTION_CONTEXTS = {
 };
 
 async function evaluateWithGemini(questionId, studentAnswer) {
-  const context = QUESTION_CONTEXTS[questionId];
-
-  const evaluationPrompt = `You are a mathematics teacher evaluating a student's answer to a question about coordinate points and coordinate systems.
-
-QUESTION:
-${context.question}
-
-STUDENT'S ANSWER:
-${studentAnswer}
-
-CORRECT ANSWER (for reference):
-${context.correctAnswer}
-
-KEY POINTS TO CHECK:
-${context.keyPoints.map((point, i) => `${i + 1}. ${point}`).join('\n')}
-
-Please evaluate the student's answer and provide:
-1. A score out of 10
-2. Detailed feedback that:
-   - Highlights what the student got right
-   - Explains what they missed or got wrong
-   - Provides gentle guidance on concepts they should review
-   - Is encouraging and constructive
-
-Format your response EXACTLY as follows:
-SCORE: X/10
-FEEDBACK: [Your detailed feedback here]
-
-Be fair but rigorous. Award points for:
-- Correct understanding of coordinate concepts (40%)
-- Clear explanation with step-by-step process or examples (40%)
-- Understanding of real-world applications or quadrant identification (20%)`;
-
   try {
-    const GEMINI_API_KEY = config.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
-
-    if (!GEMINI_API_KEY || !GEMINI_API_KEY.trim()) {
-      return {
-        score: 0,
-        feedback: 'Error: No API key found. Please configure your Gemini API key to use AI evaluation.'
-      };
-    }
-    // Use the same configuration as the chat section
-    const apiEndpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-
-    const response = await fetch(`${apiEndpoint}?key=${GEMINI_API_KEY}`, {
+    const response = await fetch('/api/gemini/evaluate', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [
-          // System prompt as first message
-          {
-            role: 'user',
-            parts: [{ text: 'You are an expert mathematics teacher. Evaluate student answers and provide scores with constructive feedback.' }]
-          },
-          {
-            role: 'model',
-            parts: [{ text: 'Understood! I will evaluate student answers fairly and provide constructive feedback with scores.' }]
-          },
-          // Actual evaluation prompt
-          {
-            role: 'user',
-            parts: [{ text: evaluationPrompt }]
-          }
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 4096,
-        }
+        tutorial: '2d-graphs',
+        questionId,
+        answer: studentAnswer
       })
     });
 
+    let result = {};
+    try {
+      result = await response.json();
+    } catch {
+      // Keep the user-facing error generic if an intermediary returns HTML.
+    }
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+      throw new Error(typeof result.error === 'string' ? result.error : 'Evaluation service is unavailable.');
+    }
+    if (!Number.isInteger(result.score) || result.score < 0 || result.score > 10 || typeof result.feedback !== 'string') {
+      throw new Error('Evaluation service returned an invalid response.');
     }
 
-    const data = await response.json();
-    if (!data.candidates || !data.candidates[0]) {
-      throw new Error('Invalid API response: No candidates found');
-    }
-
-    const candidate = data.candidates[0];
-
-    if (!candidate.content || !candidate.content.parts || !candidate.content.parts[0]) {
-      console.error('Missing content in response:', candidate);
-      throw new Error(`No content in response. Finish reason: ${candidate.finishReason || 'unknown'}`);
-    }
-
-    const responseText = candidate.content.parts[0].text;
-    // Parse the response
-    const scoreMatch = responseText.match(/SCORE:\s*(\d+)\/10/i);
-    const feedbackMatch = responseText.match(/FEEDBACK:\s*([\s\S]+)$/i);
-
-    let score, feedbackText;
-
-    if (scoreMatch && feedbackMatch) {
-      score = parseInt(scoreMatch[1]);
-      feedbackText = feedbackMatch[1].trim();
-    } else {
-      // Fallback parsing if format is not exact
-      const numberMatch = responseText.match(/(\d+)\/10/);
-      score = numberMatch ? parseInt(numberMatch[1]) : 5;
-      feedbackText = responseText.replace(/SCORE:\s*\d+\/10/i, '').replace(/FEEDBACK:/i, '').trim();
-      if (!feedbackText) feedbackText = responseText;
-    }
-
-    // Format the feedback text to HTML with proper formatting
-    const formattedFeedback = formatFeedbackText(feedbackText);
-
-    return {
-      score,
-      feedback: formattedFeedback
-    };
+    return { score: result.score, feedback: formatFeedbackText(result.feedback) };
   } catch (error) {
-    console.error('Error evaluating with Gemini:', error);
-    console.error('Error stack:', error.stack);
     return {
       score: 0,
-      feedback: `Error during evaluation: ${error.message}\n\nPlease check the browser console for more details, or try again in a moment.`
+      feedback: `Error during evaluation: ${error.message}`
     };
   }
 }
@@ -1289,75 +1193,22 @@ function initializeVisualizations() {
     });
   }
 
-  // Initialize Chat Controller if API key is available
-  const GEMINI_API_KEY = config.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
-
-  if (GEMINI_API_KEY && GEMINI_API_KEY.trim()) {
-    try {
-      const chatController = new ChatController(GEMINI_API_KEY, {
-        toolsManager: chatToolsManager,
-        tutorialContext: 'coordinate-points'
-      });
-
-      window.chatController = chatController;
-    } catch (error) {
-      console.error('Failed to initialize chat:', error);
-
-      const chatMessages = document.getElementById('chatMessages');
-      if (chatMessages) {
-        const errorMsg = document.createElement('div');
-        errorMsg.className = 'message assistant';
-        errorMsg.innerHTML = `
-          <p>Failed to initialize chat: ${error.message}</p>
-          <p class="hint">Please check your API key configuration.</p>
-        `;
-        chatMessages.appendChild(errorMsg);
-      }
-    }
-  } else {
-    console.warn('No API key provided. Chat features will not be available.');
-
+  try {
+    window.chatController = new ChatController({
+      toolsManager: chatToolsManager,
+      tutorialContext: 'coordinate-points'
+    });
+  } catch (error) {
+    console.error('Failed to initialize chat:', error);
     const chatMessages = document.getElementById('chatMessages');
     if (chatMessages) {
-      const warningMsg = document.createElement('div');
-      warningMsg.className = 'message assistant';
-      warningMsg.innerHTML = `
-        <p>No API key found. Please add your Gemini API key to config.js to use the chat feature.</p>
-        <p class="hint">Get your API key from: https://aistudio.google.com/app/apikey</p>
-      `;
-      chatMessages.appendChild(warningMsg);
-    }
-  }
-
-  // Chat input handlers
-  const chatInput = document.getElementById('chatInput');
-  const sendBtn = document.getElementById('sendBtn');
-
-  function sendMessage() {
-    if (!chatInput.value.trim()) return;
-
-    const message = chatInput.value.trim();
-    chatInput.value = '';
-
-    if (window.chatController) {
-      window.chatController.sendMessage(message);
-    } else {
-      // Show error if no chat controller
-      const chatMessages = document.getElementById('chatMessages');
       const errorMsg = document.createElement('div');
       errorMsg.className = 'message assistant';
-      errorMsg.textContent = 'Chat is not available. Please configure your API key.';
+      errorMsg.textContent = 'Failed to initialize chat.';
       chatMessages.appendChild(errorMsg);
     }
   }
 
-  sendBtn.addEventListener('click', sendMessage);
-  chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
   } // End of chat visualization
 }
 

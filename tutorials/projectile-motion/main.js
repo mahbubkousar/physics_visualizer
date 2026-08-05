@@ -3,7 +3,6 @@ import { Projectile } from '../../src/tools/projectile.js';
 import { Graph2D } from '../../src/tools/2dgraph.js';
 import { ChatController } from '../../src/core/chat-controller.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
-import { config } from '../../config.js';
 
 const vizContainer = document.getElementById('visualization');
 const toolsManager = new ToolsManager(vizContainer);
@@ -228,77 +227,21 @@ chatToolsManager.startAnimation();
 // Make chat tools manager available globally
 window.chatToolsManager = chatToolsManager;
 
-// Initialize Chat Controller if API key is available
-const GEMINI_API_KEY = config.GEMINI_API_KEY || localStorage.getItem('GEMINI_API_KEY');
-
-if (GEMINI_API_KEY && GEMINI_API_KEY.trim()) {
-  try {
-    const chatController = new ChatController(GEMINI_API_KEY, {
-      toolsManager: chatToolsManager,
-      tutorialContext: 'projectile-motion'
-    });
-
-    window.chatController = chatController;
-
-    console.log('Chat system initialized');
-  } catch (error) {
-    console.error('Failed to initialize chat:', error);
-
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
-      const errorMsg = document.createElement('div');
-      errorMsg.className = 'message assistant';
-      errorMsg.innerHTML = `
-        <p>Failed to initialize chat: ${error.message}</p>
-        <p class="hint">Please check your API key configuration.</p>
-      `;
-      chatMessages.appendChild(errorMsg);
-    }
-  }
-} else {
-  console.warn('No API key provided. Chat features will not be available.');
-
+try {
+  window.chatController = new ChatController({
+    toolsManager: chatToolsManager,
+    tutorialContext: 'projectile-motion'
+  });
+} catch (error) {
+  console.error('Failed to initialize chat:', error);
   const chatMessages = document.getElementById('chatMessages');
   if (chatMessages) {
-    const warningMsg = document.createElement('div');
-    warningMsg.className = 'message assistant';
-    warningMsg.innerHTML = `
-      <p>No API key found. Please add your Gemini API key to config.js to use the chat feature.</p>
-      <p class="hint">Get your API key from: https://aistudio.google.com/app/apikey</p>
-    `;
-    chatMessages.appendChild(warningMsg);
-  }
-}
-
-// Chat input handlers
-const chatInput = document.getElementById('chatInput');
-const sendBtn = document.getElementById('sendBtn');
-
-function sendMessage() {
-  if (!chatInput.value.trim()) return;
-
-  const message = chatInput.value.trim();
-  chatInput.value = '';
-
-  if (window.chatController) {
-    window.chatController.sendMessage(message);
-  } else {
-    // Show error if no chat controller
-    const chatMessages = document.getElementById('chatMessages');
     const errorMsg = document.createElement('div');
     errorMsg.className = 'message assistant';
-    errorMsg.textContent = 'Chat is not available. Please configure your API key.';
+    errorMsg.textContent = 'Failed to initialize chat.';
     chatMessages.appendChild(errorMsg);
   }
 }
-
-sendBtn.addEventListener('click', sendMessage);
-chatInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
 
 // Animation control handlers for chat visualization
 const chatPlayPauseBtn = document.getElementById('chatPlayPauseBtn');

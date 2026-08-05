@@ -16,22 +16,24 @@ Interactive physics education platform with AI-powered visualizations.
 ### Local Development
 
 ```bash
-# Start local server
+# Static visualizations only
 python3 -m http.server 8080
 
 # Open browser
 open http://localhost:8080
 ```
 
+To run AI features locally, create an ignored `.env` from `.env.example`, set a
+server-side `GEMINI_API_KEY`, and run the site with Netlify Dev so the function
+routes under `/api/gemini/*` are available.
+
 ### Configuration
 
-The visualization features run without credentials. AI features must call Gemini
-through a server-side proxy; never put an API key in `config.js`, browser code,
-`localStorage`, or a `VITE_` environment variable. Server-side development secrets
-belong in an ignored `.env` file based on `.env.example`.
-
-Until the server-side proxy is configured, the AI chat and answer-evaluation
-features remain unavailable.
+The visualization features run without credentials. AI features call Gemini
+through Netlify Functions; never put an API key in `config.js`, browser code,
+`localStorage`, or a `VITE_` environment variable. Local server-side secrets
+belong in an ignored `.env` file based on `.env.example`. Configure
+`GEMINI_API_KEY` in Netlify's environment variables for deployment.
 
 ## Project Structure
 
@@ -39,6 +41,7 @@ features remain unavailable.
 visualization/
 ├── index.html              # Homepage
 ├── config.js               # Public, non-secret browser configuration
+├── netlify/functions/      # Server-side Gemini proxy endpoints
 ├── src/
 │   ├── core/               # Core systems (ToolsManager, Chat, AI)
 │   └── tools/              # Visualization tools (Projectile, Graph2D)
