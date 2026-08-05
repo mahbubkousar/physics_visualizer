@@ -4,6 +4,8 @@
  * Extracts visualization commands from AI responses
  */
 
+import { formatSafeText } from './safe-html.js';
+
 /**
  * Parse AI response to extract text and visualization commands
  * @param {string} response - The AI response text
@@ -48,26 +50,7 @@ export function parseAIResponse(response) {
  * @returns {string} HTML formatted text
  */
 export function formatTextForDisplay(text) {
-  let html = text;
-
-  // Escape HTML
-  html = html.replace(/&/g, '&amp;')
-             .replace(/</g, '&lt;')
-             .replace(/>/g, '&gt;');
-
-  // Bold **text**
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
-  // Italic *text*
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-  // Inline code `code`
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-  // Line breaks
-  html = html.replace(/\n/g, '<br>');
-
-  return html;
+  return formatSafeText(text);
 }
 
 /**

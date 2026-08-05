@@ -7,6 +7,7 @@ import { Projectile } from '../../src/tools/projectile.js';
 import { Graph2D } from '../../src/tools/2dgraph.js';
 import { ChatController } from '../../src/core/chat-controller.js';
 import { initializeToolDefinitions } from '../../src/core/tool-definitions.js';
+import { formatSafeFeedback } from '../../src/core/safe-html.js';
 
 // ===================================
 // Story Feed System
@@ -401,54 +402,6 @@ window.checkQuizQuestion3 = checkQuizQuestion3;
 // Descriptive Question Evaluation using GEMINI AI
 // ===================================
 
-// Function to format feedback text to HTML with proper formatting
-function formatFeedbackText(text) {
-  let html = text;
-
-  // Convert **bold** to <strong>
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
-  // Convert *italic* to <em>
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-  // Convert bullet points (- item or * item) to <ul><li>
-  html = html.replace(/^[\*\-]\s+(.+)$/gm, '<li>$1</li>');
-  html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-
-  // Convert numbered lists (1. item, 2. item)
-  html = html.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
-  // Wrap consecutive <li> in <ol> if they came from numbered lists
-  html = html.replace(/(<li>.*?<\/li>\n?)+/g, (match) => {
-    // Check if this came from a numbered list (has digits before)
-    if (/^\d+\.\s+/m.test(text.substring(text.indexOf(match.replace(/<[^>]+>/g, ''))))) {
-      return '<ol>' + match + '</ol>';
-    }
-    return match;
-  });
-
-  // Convert paragraphs (double newlines) to <p>
-  const paragraphs = html.split(/\n\n+/);
-  html = paragraphs.map(p => {
-    p = p.trim();
-    // Don't wrap if already has block-level tags
-    if (p.startsWith('<ul>') || p.startsWith('<ol>') || p.startsWith('<h')) {
-      return p;
-    }
-    // Replace single newlines with <br>
-    p = p.replace(/\n/g, '<br>');
-    return `<p>${p}</p>`;
-  }).join('');
-
-  // Handle math formulas - convert LaTeX-style to MathJax
-  // Inline math: $formula$ or \(formula\)
-  html = html.replace(/\$([^\$]+)\$/g, '\\($1\\)');
-
-  // Display math: $$formula$$ or \[formula\]
-  html = html.replace(/\$\$([^\$]+)\$\$/g, '\\[$1\\]');
-
-  return html;
-}
-
 // Create evaluation prompts for each question
 const QUESTION_CONTEXTS = {
   question1: {
@@ -499,7 +452,7 @@ async function evaluateWithGemini(questionId, studentAnswer) {
       throw new Error('Evaluation service returned an invalid response.');
     }
 
-    return { score: result.score, feedback: formatFeedbackText(result.feedback) };
+    return { score: result.score, feedback: result.feedback };
   } catch (error) {
     return {
       score: 0,
@@ -537,7 +490,7 @@ async function evaluateDescriptiveQuestion1() {
 
     // Display results
     scoreEl.textContent = `Score: ${result.score}/10`;
-    feedbackText.innerHTML = result.feedback;
+    feedbackText.innerHTML = formatSafeFeedback(result.feedback);
 
     // Trigger MathJax to render math formulas
     if (window.MathJax && window.MathJax.typesetPromise) {
@@ -548,7 +501,7 @@ async function evaluateDescriptiveQuestion1() {
     updateScore(result.score);
   } catch (error) {
     scoreEl.textContent = 'Error';
-    feedbackText.innerHTML = `<p>Failed to evaluate: ${error.message}</p>`;
+    feedbackText.textContent = `Failed to evaluate: ${error.message}`;
   } finally {
     // Re-enable button
     if (submitBtn) {
@@ -589,7 +542,7 @@ async function evaluateDescriptiveQuestion2() {
 
     // Display results
     scoreEl.textContent = `Score: ${result.score}/10`;
-    feedbackText.innerHTML = result.feedback;
+    feedbackText.innerHTML = formatSafeFeedback(result.feedback);
 
     // Trigger MathJax to render math formulas
     if (window.MathJax && window.MathJax.typesetPromise) {
@@ -600,7 +553,7 @@ async function evaluateDescriptiveQuestion2() {
     updateScore(result.score);
   } catch (error) {
     scoreEl.textContent = 'Error';
-    feedbackText.innerHTML = `<p>Failed to evaluate: ${error.message}</p>`;
+    feedbackText.textContent = `Failed to evaluate: ${error.message}`;
   } finally {
     // Re-enable button
     if (submitBtn) {
