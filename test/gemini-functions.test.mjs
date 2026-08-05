@@ -16,10 +16,10 @@ test.afterEach(() => {
   }
 });
 
-function jsonRequest(url, body, method = 'POST') {
+function jsonRequest(url, body, method = 'POST', headers = {}) {
   return new Request(url, {
     method,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...headers },
     body: method === 'POST' ? JSON.stringify(body) : undefined
   });
 }
@@ -28,6 +28,20 @@ test('chat rejects non-POST requests', async () => {
   const response = await chatHandler(jsonRequest('https://example.test/api/gemini/chat', {}, 'GET'));
   assert.equal(response.status, 405);
   assert.deepEqual(await response.json(), { error: 'Method not allowed.' });
+});
+
+test('AI endpoints reject cross-origin browser requests', async () => {
+  globalThis.fetch = async () => assert.fail('Gemini should not be called');
+  const request = jsonRequest(
+    'https://example.test/api/gemini/chat',
+    { history: [{ role: 'user', parts: [{ text: 'Explain gravity.' }] }] },
+    'POST',
+    { Origin: 'https://attacker.example', 'Sec-Fetch-Site': 'cross-site' }
+  );
+
+  const response = await chatHandler(request);
+  assert.equal(response.status, 403);
+  assert.deepEqual(await response.json(), { error: 'Cross-site requests are not allowed.' });
 });
 
 test('chat fails safely when the server credential is missing', async () => {
@@ -93,4 +107,5 @@ test('evaluation validates and returns structured model output', async () => {
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { score: 8, feedback: 'Good reasoning.' });
   assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.equal(response.headers.get('cross-origin-resource-policy'), 'same-origin');
 });

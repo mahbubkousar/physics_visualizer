@@ -15,9 +15,23 @@ export function jsonResponse(body, status = 200) {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Cache-Control': 'no-store',
+      'Cross-Origin-Resource-Policy': 'same-origin',
+      'Referrer-Policy': 'no-referrer',
       'X-Content-Type-Options': 'nosniff'
     }
   });
+}
+
+export function assertSameOrigin(request) {
+  const fetchSite = request.headers.get('sec-fetch-site');
+  if (fetchSite === 'cross-site') {
+    throw new HttpError(403, 'Cross-site requests are not allowed.');
+  }
+
+  const origin = request.headers.get('origin');
+  if (origin && origin !== new URL(request.url).origin) {
+    throw new HttpError(403, 'Cross-origin requests are not allowed.');
+  }
 }
 
 export async function readJsonRequest(request, maxBytes) {

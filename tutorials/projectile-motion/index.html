@@ -9,26 +9,12 @@
         integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0"
         crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="/mathjax-config.js"></script>
   <!-- MathJax remains remote but is pinned and integrity-checked. -->
   <script id="MathJax-script" async
           src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
           integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
           crossorigin="anonymous"></script>
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']]
-      },
-      startup: {
-        pageReady: () => {
-          return MathJax.startup.defaultPageReady().then(() => {
-            console.log('MathJax initial typesetting complete');
-          });
-        }
-      }
-    };
-  </script>
   <style>
     * {
       margin: 0;
@@ -2650,7 +2636,7 @@
         <h4>Question 1:</h4>
         <p>A cannonball is fired. At the very top of its trajectory, what is its vertical velocity ($v_y$)?</p>
         <input type="text" class="quiz-input" id="q1-input" placeholder="Enter your answer (e.g., 0 m/s)">
-        <button class="btn-check" onclick="checkQuizQuestion1()">Check Answer</button>
+        <button class="btn-check" data-action="check-quiz-1">Check Answer</button>
         <div class="quiz-feedback" id="q1-feedback">
           <p id="q1-feedback-text"></p>
         </div>
@@ -2674,7 +2660,7 @@
             <span>Stays the same</span>
           </label>
         </div>
-        <button class="btn-check" onclick="checkQuizQuestion2()">Check Answer</button>
+        <button class="btn-check" data-action="check-quiz-2">Check Answer</button>
         <div class="quiz-feedback" id="q2-feedback">
           <p id="q2-feedback-text"></p>
         </div>
@@ -2685,7 +2671,7 @@
         <h4>Question 3:</h4>
         <p>Which launch angle gives the maximum possible range for a projectile?</p>
         <input type="number" class="quiz-input" id="q3-input" placeholder="Enter angle in degrees">
-        <button class="btn-check" onclick="checkQuizQuestion3()">Check Answer</button>
+        <button class="btn-check" data-action="check-quiz-3">Check Answer</button>
         <div class="quiz-feedback" id="q3-feedback">
           <p id="q3-feedback-text"></p>
         </div>
@@ -2703,7 +2689,7 @@
         <h4>Question 1:</h4>
         <p>You fire two projectiles from ground level with the same initial speed. One is fired at 20° and the other at 70°. Ignoring air resistance, which one will have the greater range? Explain your reasoning.</p>
         <textarea class="descriptive-textarea" id="desc-q1" placeholder="Type your detailed answer here..."></textarea>
-        <button class="btn-submit" onclick="evaluateDescriptiveQuestion1()">
+        <button class="btn-submit" data-action="evaluate-description-1">
           <i class="fas fa-paper-plane"></i> Submit for Evaluation
         </button>
         <div class="ai-feedback" id="desc-q1-feedback">
@@ -2717,7 +2703,7 @@
         <h4>Question 2:</h4>
         <p>Imagine you throw a ball horizontally from a tall cliff. At the exact same moment, your friend drops an identical ball from the same height. Which ball hits the ground first? Explain why.</p>
         <textarea class="descriptive-textarea" id="desc-q2" placeholder="Type your detailed answer here..."></textarea>
-        <button class="btn-submit" onclick="evaluateDescriptiveQuestion2()">
+        <button class="btn-submit" data-action="evaluate-description-2">
           <i class="fas fa-paper-plane"></i> Submit for Evaluation
         </button>
         <div class="ai-feedback" id="desc-q2-feedback">
@@ -2813,7 +2799,7 @@
   </main>
 
   <!-- Floating TOC Button -->
-  <button class="floating-toc" id="btnTOC" onclick="toggleTOC()">
+  <button class="floating-toc" id="btnTOC">
     <i class="fas fa-list"></i>
   </button>
 
@@ -2821,20 +2807,20 @@
   <div class="toc-panel" id="tocPanel">
     <h3>Table of Contents</h3>
     <ul class="toc-list">
-      <li><a href="#section-1" onclick="scrollToSection(1)">1. What is Projectile Motion?</a></li>
-      <li><a href="#section-2" onclick="scrollToSection(2)">2. Definition & Assumptions</a></li>
-      <li><a href="#section-3" onclick="scrollToSection(3)">3. The Two Components</a></li>
-      <li><a href="#section-4" onclick="scrollToSection(4)">4. Visualization</a></li>
-      <li><a href="#section-5" onclick="scrollToSection(5)">5. Key Formulas</a></li>
-      <li><a href="#section-6" onclick="scrollToSection(6)">6. Example: Cannonball</a></li>
-      <li><a href="#section-7" onclick="scrollToSection(7)">7. Quick Test</a></li>
-      <li><a href="#section-8" onclick="scrollToSection(8)">8. Descriptive Test</a></li>
-      <li><a href="#section-9" onclick="scrollToSection(9)">9. Chat Playground</a></li>
+      <li><a href="#section-1">1. What is Projectile Motion?</a></li>
+      <li><a href="#section-2">2. Definition & Assumptions</a></li>
+      <li><a href="#section-3">3. The Two Components</a></li>
+      <li><a href="#section-4">4. Visualization</a></li>
+      <li><a href="#section-5">5. Key Formulas</a></li>
+      <li><a href="#section-6">6. Example: Cannonball</a></li>
+      <li><a href="#section-7">7. Quick Test</a></li>
+      <li><a href="#section-8">8. Descriptive Test</a></li>
+      <li><a href="#section-9">9. Chat Playground</a></li>
     </ul>
   </div>
 
   <!-- Floating AI Button -->
-  <button class="floating-ai" id="btnAI" onclick="scrollToChat()">
+  <button class="floating-ai" id="btnAI">
     <i class="fas fa-robot"></i>
   </button>
 

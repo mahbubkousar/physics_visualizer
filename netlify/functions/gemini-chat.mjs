@@ -1,5 +1,6 @@
 import {
   HttpError,
+  assertSameOrigin,
   errorResponse,
   generateContent,
   jsonResponse,
@@ -66,6 +67,7 @@ function validateHistory(value) {
 
 export default async function handler(request) {
   try {
+    assertSameOrigin(request);
     const body = await readJsonRequest(request, MAX_BODY_BYTES);
     const history = validateHistory(body.history);
     const text = await generateContent([

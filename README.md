@@ -17,7 +17,7 @@ Interactive physics education platform with AI-powered visualizations.
 
 ```bash
 # Install the exact locked dependencies
-npm install
+npm ci
 
 # Run the Vite development server
 npm run dev
@@ -74,8 +74,13 @@ visualization/
 ## Deployment
 
 The site auto-deploys to Netlify on every push to `master`. Configuration:
-- `netlify.toml` - Build settings and headers
-- `_headers` - Additional HTTP headers
+- `netlify.toml` - Build settings and the browser security policy
+
+## Security
+
+AI credentials are server-only, requests are size- and rate-limited, and the
+public site enforces a Content Security Policy and other defensive headers.
+Please report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 

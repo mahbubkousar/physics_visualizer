@@ -284,10 +284,6 @@ function scrollToSection(sectionNum) {
   }
 }
 
-// Make functions available globally for inline onclick handlers
-window.toggleTOC = toggleTOC;
-window.scrollToSection = scrollToSection;
-
 // Highlight active section in TOC
 function updateTOCHighlight() {
   const sections = document.querySelectorAll('[data-section]');
@@ -320,8 +316,6 @@ function scrollToChat() {
   }
 }
 
-window.scrollToChat = scrollToChat;
-
 // ===================================
 // Quiz Question Handlers
 // ===================================
@@ -348,8 +342,6 @@ function checkQuizQuestion1() {
   feedback.style.display = 'block';
 }
 
-window.checkQuizQuestion1 = checkQuizQuestion1;
-
 // Question 2
 function checkQuizQuestion2() {
   const selected = document.querySelector('input[name="q2"]:checked');
@@ -375,8 +367,6 @@ function checkQuizQuestion2() {
   feedback.style.display = 'block';
 }
 
-window.checkQuizQuestion2 = checkQuizQuestion2;
-
 // Question 3
 function checkQuizQuestion3() {
   const input = document.getElementById('q3-input');
@@ -395,8 +385,6 @@ function checkQuizQuestion3() {
 
   feedback.style.display = 'block';
 }
-
-window.checkQuizQuestion3 = checkQuizQuestion3;
 
 // ===================================
 // Descriptive Question Evaluation using GEMINI AI
@@ -466,7 +454,7 @@ async function evaluateDescriptiveQuestion1() {
   const feedback = document.getElementById('desc-q1-feedback');
   const scoreEl = document.getElementById('desc-q1-score');
   const feedbackText = document.getElementById('desc-q1-feedback-text');
-  const submitBtn = document.querySelector('[onclick="evaluateDescriptiveQuestion1()"]');
+  const submitBtn = document.querySelector('[data-action="evaluate-description-1"]');
   const answer = textarea.value.trim();
 
   if (!answer) {
@@ -511,14 +499,12 @@ async function evaluateDescriptiveQuestion1() {
   }
 }
 
-window.evaluateDescriptiveQuestion1 = evaluateDescriptiveQuestion1;
-
 async function evaluateDescriptiveQuestion2() {
   const textarea = document.getElementById('desc-q2');
   const feedback = document.getElementById('desc-q2-feedback');
   const scoreEl = document.getElementById('desc-q2-score');
   const feedbackText = document.getElementById('desc-q2-feedback-text');
-  const submitBtn = document.querySelector('[onclick="evaluateDescriptiveQuestion2()"]');
+  const submitBtn = document.querySelector('[data-action="evaluate-description-2"]');
   const answer = textarea.value.trim();
 
   if (!answer) {
@@ -562,8 +548,6 @@ async function evaluateDescriptiveQuestion2() {
     }
   }
 }
-
-window.evaluateDescriptiveQuestion2 = evaluateDescriptiveQuestion2;
 
 // ===================================
 // Visualization Functionality
@@ -1192,12 +1176,36 @@ window.showFinishedControls = () => {
 // ===================================
 // Initialize
 // ===================================
+
+const actionHandlers = {
+  'check-quiz-1': checkQuizQuestion1,
+  'check-quiz-2': checkQuizQuestion2,
+  'check-quiz-3': checkQuizQuestion3,
+  'evaluate-description-1': evaluateDescriptiveQuestion1,
+  'evaluate-description-2': evaluateDescriptiveQuestion2
+};
+
+document.querySelectorAll('[data-action]').forEach(element => {
+  const handler = actionHandlers[element.dataset.action];
+  if (handler) element.addEventListener('click', handler);
+});
+
+document.getElementById('btnTOC')?.addEventListener('click', toggleTOC);
+document.getElementById('btnAI')?.addEventListener('click', scrollToChat);
+
+document.querySelectorAll('#tocPanel a[href^="#section-"]').forEach(link => {
+  link.addEventListener('click', event => {
+    event.preventDefault();
+    scrollToSection(link.hash.slice('#section-'.length));
+  });
+});
+
 // Close TOC when clicking outside
 document.addEventListener('click', (e) => {
   const tocPanel = document.getElementById('tocPanel');
   const tocBtn = document.getElementById('btnTOC');
 
-  if (tocPanel.classList.contains('active') && !tocPanel.contains(e.target) && e.target !== tocBtn) {
+  if (tocPanel.classList.contains('active') && !tocPanel.contains(e.target) && !tocBtn.contains(e.target)) {
     tocPanel.classList.remove('active');
   }
 });

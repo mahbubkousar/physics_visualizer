@@ -470,7 +470,7 @@
         <ul>
           <li><a href="#home">Home</a></li>
           <li><a href="#tutorials">Tutorials</a></li>
-          <li><a href="https://asymptotelabs.github.io" target="_blank">About</a></li>
+          <li><a href="https://asymptotelabs.github.io" target="_blank" rel="noopener noreferrer">About</a></li>
         </ul>
       </nav>
     </div>
@@ -554,28 +554,9 @@
   </main>
 
   <footer>
-    <p>&copy; 2025 <a href="https://asymptotelabs.github.io" target="_blank">Asymptote Labs</a>. Crafted for learners.</p>
+    <p>&copy; 2025 <a href="https://asymptotelabs.github.io" target="_blank" rel="noopener noreferrer">Asymptote Labs</a>. Crafted for learners.</p>
   </footer>
 
-  <script>
-    // Search functionality
-    const searchInput = document.getElementById('searchInput');
-    const courseCards = document.querySelectorAll('.course-card');
-
-    searchInput.addEventListener('input', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-
-      courseCards.forEach(card => {
-        const title = card.querySelector('.course-title')?.textContent.toLowerCase() || '';
-        const description = card.querySelector('.course-description')?.textContent.toLowerCase() || '';
-
-        if (title.includes(searchTerm) || description.includes(searchTerm)) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  </script>
+  <script type="module" src="/src/homepage.js"></script>
 </body>
 </html>

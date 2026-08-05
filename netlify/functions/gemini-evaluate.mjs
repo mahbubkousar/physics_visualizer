@@ -1,5 +1,6 @@
 import {
   HttpError,
+  assertSameOrigin,
   errorResponse,
   generateContent,
   jsonResponse,
@@ -57,6 +58,7 @@ function parseEvaluation(text) {
 
 export default async function handler(request) {
   try {
+    assertSameOrigin(request);
     const body = await readJsonRequest(request, MAX_BODY_BYTES);
     const tutorial = QUESTION_CONTEXTS[body.tutorial];
     const context = tutorial?.[body.questionId];

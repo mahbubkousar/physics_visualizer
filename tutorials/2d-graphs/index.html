@@ -9,26 +9,12 @@
         integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0"
         crossorigin="anonymous" referrerpolicy="no-referrer">
 
+  <script src="/mathjax-config.js"></script>
   <!-- MathJax remains remote but is pinned and integrity-checked. -->
   <script id="MathJax-script" async
           src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"
           integrity="sha384-Wuix6BuhrWbjDBs24bXrjf4ZQ5aFeFWBuKkFekO2t8xFU0iNaLQfp2K6/1Nxveei"
           crossorigin="anonymous"></script>
-  <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']]
-      },
-      startup: {
-        pageReady: () => {
-          return MathJax.startup.defaultPageReady().then(() => {
-            console.log('MathJax initial typesetting complete');
-          });
-        }
-      }
-    };
-  </script>
   <style>
     * {
       margin: 0;
@@ -2700,7 +2686,7 @@
             <span>Quadrant IV</span>
           </label>
         </div>
-        <button class="btn-check" onclick="checkQuizQuestion1()">Check Answer</button>
+        <button class="btn-check" data-action="check-quiz-1">Check Answer</button>
         <div class="quiz-feedback" id="q1-feedback">
           <p id="q1-feedback-text"></p>
         </div>
@@ -2711,7 +2697,7 @@
         <h4>Question 2:</h4>
         <p>What are the coordinates of the origin?</p>
         <input type="text" class="quiz-input" id="q2-input" placeholder="Enter coordinates (e.g., 0, 0)">
-        <button class="btn-check" onclick="checkQuizQuestion2()">Check Answer</button>
+        <button class="btn-check" data-action="check-quiz-2">Check Answer</button>
         <div class="quiz-feedback" id="q2-feedback">
           <p id="q2-feedback-text"></p>
         </div>
@@ -2739,7 +2725,7 @@
             <span>Quadrant IV</span>
           </label>
         </div>
-        <button class="btn-check" onclick="checkQuizQuestion3()">Check Answer</button>
+        <button class="btn-check" data-action="check-quiz-3">Check Answer</button>
         <div class="quiz-feedback" id="q3-feedback">
           <p id="q3-feedback-text"></p>
         </div>
@@ -2757,7 +2743,7 @@
         <h4>Question 1:</h4>
         <p>Explain step-by-step how to plot a coordinate point on the Cartesian plane. What do you do first, second, and third? Use the point $(5, -3)$ as an example in your explanation.</p>
         <textarea class="descriptive-textarea" id="desc-q1" placeholder="Type your detailed answer here..."></textarea>
-        <button class="btn-submit" onclick="evaluateDescriptiveQuestion1()">
+        <button class="btn-submit" data-action="evaluate-description-1">
           <i class="fas fa-paper-plane"></i> Submit for Evaluation
         </button>
         <div class="ai-feedback" id="desc-q1-feedback">
@@ -2771,7 +2757,7 @@
         <h4>Question 2:</h4>
         <p>Describe three real-world applications where coordinate systems are essential. For each application, explain how coordinate points are used and why they're important. Be specific with examples.</p>
         <textarea class="descriptive-textarea" id="desc-q2" placeholder="Type your detailed answer here..."></textarea>
-        <button class="btn-submit" onclick="evaluateDescriptiveQuestion2()">
+        <button class="btn-submit" data-action="evaluate-description-2">
           <i class="fas fa-paper-plane"></i> Submit for Evaluation
         </button>
         <div class="ai-feedback" id="desc-q2-feedback">
@@ -2900,7 +2886,7 @@
   </main>
 
   <!-- Floating TOC Button -->
-  <button class="floating-toc" id="btnTOC" onclick="toggleTOC()">
+  <button class="floating-toc" id="btnTOC">
     <i class="fas fa-list"></i>
   </button>
 
@@ -2908,21 +2894,21 @@
   <div class="toc-panel" id="tocPanel">
     <h3>Table of Contents</h3>
     <ul class="toc-list">
-      <li><a href="#section-1" onclick="scrollToSection(1)">1. Understanding Coordinate Points</a></li>
-      <li><a href="#section-2" onclick="scrollToSection(2)">2. Cartesian Coordinate System</a></li>
-      <li><a href="#section-3" onclick="scrollToSection(3)">3. Key Concepts</a></li>
-      <li><a href="#section-4" onclick="scrollToSection(4)">4. Interactive Visualization</a></li>
-      <li><a href="#section-5" onclick="scrollToSection(5)">5. Worked Examples</a></li>
-      <li><a href="#section-6" onclick="scrollToSection(6)">6. Comparing Points</a></li>
-      <li><a href="#section-7" onclick="scrollToSection(7)">7. Quick Test</a></li>
-      <li><a href="#section-8" onclick="scrollToSection(8)">8. Descriptive Test</a></li>
-      <li><a href="#section-9" onclick="scrollToSection(9)">9. Summary</a></li>
-      <li><a href="#section-10" onclick="scrollToSection(10)">10. Chat Playground</a></li>
+      <li><a href="#section-1">1. Understanding Coordinate Points</a></li>
+      <li><a href="#section-2">2. Cartesian Coordinate System</a></li>
+      <li><a href="#section-3">3. Key Concepts</a></li>
+      <li><a href="#section-4">4. Interactive Visualization</a></li>
+      <li><a href="#section-5">5. Worked Examples</a></li>
+      <li><a href="#section-6">6. Comparing Points</a></li>
+      <li><a href="#section-7">7. Quick Test</a></li>
+      <li><a href="#section-8">8. Descriptive Test</a></li>
+      <li><a href="#section-9">9. Summary</a></li>
+      <li><a href="#section-10">10. Chat Playground</a></li>
     </ul>
   </div>
 
   <!-- Floating AI Button -->
-  <button class="floating-ai" id="btnAI" onclick="scrollToChat()">
+  <button class="floating-ai" id="btnAI">
     <i class="fas fa-robot"></i>
   </button>
 
